@@ -119,10 +119,10 @@ export function LocationInput({
             {/* Suggestions Dropdown */}
             {isFocused && predictions.length > 0 && (
                 <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl overflow-hidden z-50 max-h-[400px] overflow-y-auto">
-                    {predictions.map((suggestion, index) => (
+                    {predictions.map((prediction, index) => (
                         <button
                             key={index}
-                            onClick={() => handleSelectSuggestion(suggestion)}
+                            onClick={() => handleSelectSuggestion(prediction.description)}
                             className="w-full px-6 py-4 text-left hover:bg-[#F6F6F6] transition-colors border-b border-[#EEEEEE] last:border-b-0 flex items-center gap-3"
                         >
                             <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
@@ -130,8 +130,15 @@ export function LocationInput({
                                     <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                                 </svg>
                             </div>
-                            <div className="text-[16px] text-black leading-relaxed">
-                                {suggestion}
+                            <div className="flex-1">
+                                <div className="text-[15px] font-semibold text-black">
+                                    {prediction.structured_formatting?.main_text || prediction.description}
+                                </div>
+                                {prediction.structured_formatting?.secondary_text && (
+                                    <div className="text-[13px] text-gray-500">
+                                        {prediction.structured_formatting.secondary_text}
+                                    </div>
+                                )}
                             </div>
                         </button>
                     ))}

@@ -2,11 +2,13 @@
 
 import { useState, useEffect, useRef } from 'react';
 
-interface ConfirmPickupModalProps {
+interface SetLocationModalProps {
     isOpen: boolean;
     onClose: () => void;
     onConfirm: (location: string) => void;
-    initialLocation: string;
+    initialLocation?: string;
+    title?: string;
+    locationType?: 'pickup' | 'destination' | 'stop';
 }
 
 declare global {
@@ -16,8 +18,15 @@ declare global {
     }
 }
 
-export function ConfirmPickupModal({ isOpen, onClose, onConfirm, initialLocation }: ConfirmPickupModalProps) {
-    const [pickupLocation, setPickupLocation] = useState(initialLocation);
+export function SetLocationModal({
+    isOpen,
+    onClose,
+    onConfirm,
+    initialLocation = '',
+    title = 'Set location',
+    locationType = 'pickup'
+}: SetLocationModalProps) {
+    const [selectedLocation, setSelectedLocation] = useState(initialLocation);
     const [mapCenter, setMapCenter] = useState({ lat: 31.5204, lng: 74.3587 }); // Lahore default
     const mapRef = useRef<HTMLDivElement>(null);
     const mapInstanceRef = useRef<any>(null);
@@ -30,13 +39,6 @@ export function ConfirmPickupModal({ isOpen, onClose, onConfirm, initialLocation
         const loadGoogleMaps = () => {
             if (window.google) {
                 initializeMap();
-                return;
-            }
-
-            // Check if script is already being loaded
-            const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
-            if (existingScript) {
-                existingScript.addEventListener('load', initializeMap);
                 return;
             }
 
@@ -55,7 +57,7 @@ export function ConfirmPickupModal({ isOpen, onClose, onConfirm, initialLocation
             const map = new window.google.maps.Map(mapRef.current, {
                 center: mapCenter,
                 zoom: 16,
-                mapId: 'DEMO_MAP_ID', // Required for AdvancedMarkerElement
+                mapId: 'DEMO_MAP_ID',
                 disableDefaultUI: false,
                 zoomControl: true,
                 mapTypeControl: false,
@@ -66,7 +68,6 @@ export function ConfirmPickupModal({ isOpen, onClose, onConfirm, initialLocation
             mapInstanceRef.current = map;
 
             // Add invisible marker at center (for position tracking)
-            // Create an empty div for invisible marker
             const markerContent = document.createElement('div');
             markerContent.style.width = '0';
             markerContent.style.height = '0';
@@ -104,7 +105,7 @@ export function ConfirmPickupModal({ isOpen, onClose, onConfirm, initialLocation
                 { location: { lat, lng } },
                 (results: any[], status: string) => {
                     if (status === 'OK' && results[0]) {
-                        setPickupLocation(results[0].formatted_address);
+                        setSelectedLocation(results[0].formatted_address);
                     }
                 }
             );
@@ -116,11 +117,28 @@ export function ConfirmPickupModal({ isOpen, onClose, onConfirm, initialLocation
     if (!isOpen) return null;
 
     const handleConfirm = () => {
-        onConfirm(pickupLocation);
+        onConfirm(selectedLocation);
+        onClose();
+    };
+
+    // Get appropriate icon based on location type
+    const getLocationIcon = () => {
+        switch (locationType) {
+            case 'pickup':
+                return <div className="w-3 h-3 rounded-full bg-black"></div>;
+            case 'destination':
+                return (
+                    <div className="w-3 h-3 bg-black" style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }}></div>
+                );
+            case 'stop':
+                return <div className="w-3 h-3 rounded-sm bg-black"></div>;
+            default:
+                return <div className="w-3 h-3 rounded-full bg-black"></div>;
+        }
     };
 
     return (
-        <div className="fixed inset-0 z-[200] flex bg-white transition-none">
+        <div className="fixed inset-0 z-[200] flex bg-white">
             {/* Left Side - Confirmation Card */}
             <div className="w-[400px] flex flex-col bg-white border-r border-gray-200">
                 {/* Header */}
@@ -133,7 +151,7 @@ export function ConfirmPickupModal({ isOpen, onClose, onConfirm, initialLocation
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
                     </button>
-                    <h2 className="text-xl font-bold text-black">Confirm pickup</h2>
+                    <h2 className="text-xl font-bold text-black">{title}</h2>
                 </div>
 
                 {/* Content */}
@@ -147,7 +165,7 @@ export function ConfirmPickupModal({ isOpen, onClose, onConfirm, initialLocation
                                 </svg>
                                 <div>
                                     <p className="text-sm font-medium text-blue-900">Move the map to adjust</p>
-                                    <p className="text-xs text-blue-700 mt-1">Drag the map to position the pin at your exact pickup location</p>
+                                    <p className="text-xs text-blue-700 mt-1">Drag the map to position the pin at your exact location</p>
                                 </div>
                             </div>
                         </div>
@@ -155,12 +173,13 @@ export function ConfirmPickupModal({ isOpen, onClose, onConfirm, initialLocation
 
                     {/* Location Display */}
                     <div className="mb-6">
-                        <label className="text-sm font-medium text-gray-600 mb-2 block">Pickup location</label>
+                        <label className="text-sm font-medium text-gray-600 mb-2 block">Selected location</label>
                         <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
-                            <div className="w-2 h-2 mt-1.5 bg-black rounded-full flex-shrink-0"></div>
+                            <div className="mt-1.5 flex-shrink-0">
+                                {getLocationIcon()}
+                            </div>
                             <div className="flex-1 min-w-0">
-                                <p className="font-medium text-black break-words">{pickupLocation}</p>
-                                <p className="text-sm text-gray-500 mt-1">Meet your driver at this location</p>
+                                <p className="font-medium text-black break-words">{selectedLocation || 'Move map to select location'}</p>
                             </div>
                         </div>
                     </div>
@@ -172,9 +191,10 @@ export function ConfirmPickupModal({ isOpen, onClose, onConfirm, initialLocation
                     <div className="space-y-3 relative z-10">
                         <button
                             onClick={handleConfirm}
-                            className="w-full py-4 bg-black text-white rounded-xl font-bold text-lg hover:bg-gray-800 transition-colors shadow-lg cursor-pointer relative z-10"
+                            disabled={!selectedLocation}
+                            className="w-full py-4 bg-black text-white rounded-xl font-bold text-lg hover:bg-gray-800 transition-colors shadow-lg cursor-pointer relative z-10 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            Confirm pickup
+                            Confirm location
                         </button>
                         <button
                             onClick={onClose}

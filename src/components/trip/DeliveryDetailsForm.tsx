@@ -7,6 +7,7 @@
 
 import { useState } from 'react';
 import { DeliveryDetails, MeetingOption } from '@/types/delivery';
+import { Input } from '@/components/ui/Input';
 
 interface DeliveryDetailsFormProps {
     pickupAddress: string;
@@ -20,6 +21,9 @@ export function DeliveryDetailsForm({ pickupAddress, dropoffAddress, onSubmit }:
 
     // Pickup Details
     const [pickupBusinessName, setPickupBusinessName] = useState('');
+    const [pickupAptSuite, setPickupAptSuite] = useState('');
+    const [pickupContactName, setPickupContactName] = useState('');
+    const [pickupPhone, setPickupPhone] = useState('');
     const [pickupMeetingOption, setPickupMeetingOption] = useState<MeetingOption>('meet_at_curb');
     const [pickupNote, setPickupNote] = useState('');
 
@@ -82,98 +86,179 @@ export function DeliveryDetailsForm({ pickupAddress, dropoffAddress, onSubmit }:
                     </button>
 
                     {pickupExpanded && (
-                        <div className="p-4 pt-0 space-y-4">
-                            {/* Pickup Address */}
-                            <div className="flex items-start gap-2 text-[14px] text-gray-600">
-                                <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                                </svg>
-                                <span>{pickupAddress}</span>
+                        <div className="p-6 pt-0 space-y-4">
+                            {/* Address Display */}
+                            <div className="flex items-start gap-3">
+                                <div className="w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <svg className="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                                    </svg>
+                                </div>
+                                <div className="flex-1">
+                                    <p className="text-[15px] font-semibold text-black">{pickupAddress.split(',')[0]}</p>
+                                    <p className="text-[13px] text-gray-600">{pickupAddress.split(',').slice(1).join(',').trim()}</p>
+                                </div>
                             </div>
 
-                            {/* Business/Building Name */}
-                            <input
+                            {/* Building Name */}
+                            <Input
                                 type="text"
                                 value={pickupBusinessName}
                                 onChange={(e) => setPickupBusinessName(e.target.value)}
-                                placeholder="Business/building name"
-                                className="w-full px-4 py-3 bg-[#F3F3F3] rounded-xl text-[15px] outline-none focus:bg-white focus:ring-2 focus:ring-black transition-all"
+                                placeholder="building gnine"
+                                variant="filled"
                             />
 
-                            {/* Meeting Options */}
-                            <div className="space-y-2">
-                                {[
-                                    { value: 'meet_at_curb' as MeetingOption, label: 'Meet at curb' },
-                                    { value: 'meet_at_door' as MeetingOption, label: 'Meet at door' },
-                                    { value: 'pickup_at_door' as MeetingOption, label: 'Pickup at door' },
-                                ].map((option) => (
-                                    <button
-                                        key={option.value}
-                                        onClick={() => setPickupMeetingOption(option.value)}
-                                        className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all ${pickupMeetingOption === option.value
-                                                ? 'bg-black text-white'
-                                                : 'bg-[#F3F3F3] text-black hover:bg-[#E8E8E8]'
-                                            }`}
-                                    >
-                                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${pickupMeetingOption === option.value ? 'border-white' : 'border-gray-400'
-                                            }`}>
-                                            {pickupMeetingOption === option.value && (
-                                                <div className="w-2.5 h-2.5 rounded-full bg-white"></div>
-                                            )}
-                                        </div>
-                                        <span className="text-[15px] font-medium">{option.label}</span>
-                                    </button>
-                                ))}
+                            {/* Apt/Suite/Floor */}
+                            <Input
+                                type="text"
+                                value={pickupAptSuite}
+                                onChange={(e) => setPickupAptSuite(e.target.value)}
+                                placeholder="Apt / Suite / Floor"
+                                variant="filled"
+                            />
+
+                            {/* Contact Name Header */}
+                            <div className="flex items-center gap-2">
+                                <svg className="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                                </svg>
+                                <h3 className="text-[16px] font-bold text-black">Contact name</h3>
                             </div>
 
-                            {/* Pickup Note */}
-                            <textarea
-                                value={pickupNote}
-                                onChange={(e) => setPickupNote(e.target.value)}
-                                placeholder="Add a pickup note"
-                                rows={3}
-                                className="w-full px-4 py-3 bg-[#F3F3F3] rounded-xl text-[15px] outline-none focus:bg-white focus:ring-2 focus:ring-black transition-all resize-none"
+                            {/* Contact Name Input */}
+                            <Input
+                                type="text"
+                                value={pickupContactName}
+                                onChange={(e) => setPickupContactName(e.target.value)}
+                                placeholder="zeeshan"
+                                variant="filled"
                             />
+
+                            {/* Phone Number with Country Selector */}
+                            <div className="flex gap-2">
+                                <div className="flex items-center gap-2 px-3 py-3 bg-gray-100 rounded-lg">
+                                    <span className="text-xl">🇺🇸</span>
+                                    <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
+                                <Input
+                                    type="tel"
+                                    value={pickupPhone}
+                                    onChange={(e) => setPickupPhone(e.target.value)}
+                                    placeholder="+1 (999) 999-9999"
+                                    variant="filled"
+                                    className="flex-1"
+                                />
+                            </div>
+
+                            {/* Meet Location Section */}
+                            <div className="flex items-start gap-3 pt-2">
+                                <div className="w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <svg className="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z" />
+                                    </svg>
+                                </div>
+                                <div className="flex-1">
+                                    <p className="text-[15px] font-semibold text-black">
+                                        {pickupMeetingOption === 'meet_at_curb' ? 'Meet at curb' : pickupMeetingOption === 'meet_at_door' ? 'Meet at door' : 'Pickup at door'}
+                                    </p>
+                                    <p className="text-[13px] text-gray-600 mb-3">Add a pickup note</p>
+
+                                    {/* Where should your driver meet you? */}
+                                    <p className="text-[15px] font-medium text-black mb-3">Where should your driver meet you?</p>
+
+                                    {/* Meet Location Pills */}
+                                    <div className="flex flex-wrap gap-2 mb-4">
+                                        <button
+                                            onClick={() => setPickupMeetingOption('meet_at_curb')}
+                                            className={`px-4 py-2 rounded-full text-[14px] font-medium transition-colors flex items-center gap-2 ${pickupMeetingOption === 'meet_at_curb'
+                                                ? 'bg-black text-white'
+                                                : 'bg-white text-black border border-gray-300 hover:bg-gray-50'
+                                                }`}
+                                        >
+                                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z" />
+                                            </svg>
+                                            Meet at curb
+                                        </button>
+                                        <button
+                                            onClick={() => setPickupMeetingOption('meet_at_door')}
+                                            className={`px-4 py-2 rounded-full text-[14px] font-medium transition-colors flex items-center gap-2 ${pickupMeetingOption === 'meet_at_door'
+                                                ? 'bg-black text-white'
+                                                : 'bg-white text-black border border-gray-300 hover:bg-gray-50'
+                                                }`}
+                                        >
+                                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                                            </svg>
+                                            Meet at door
+                                        </button>
+                                        <button
+                                            onClick={() => setPickupMeetingOption('pickup_at_door')}
+                                            className={`px-4 py-2 rounded-full text-[14px] font-medium transition-colors flex items-center gap-2 ${pickupMeetingOption === 'pickup_at_door'
+                                                ? 'bg-black text-white'
+                                                : 'bg-white text-black border border-gray-300 hover:bg-gray-50'
+                                                }`}
+                                        >
+                                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                                            </svg>
+                                            Pickup at door
+                                        </button>
+                                    </div>
+
+                                    {/* Pickup Note Textarea */}
+                                    <textarea
+                                        value={pickupNote}
+                                        onChange={(e) => setPickupNote(e.target.value)}
+                                        placeholder="Add a pickup note"
+                                        rows={4}
+                                        className="w-full px-4 py-3 bg-gray-100 rounded-lg text-[15px] text-black placeholder-gray-500 outline-none focus:bg-gray-200 transition-colors resize-none"
+                                    />
+                                </div>
+                            </div>
                         </div>
                     )}
                 </div>
 
                 {/* Recipient Details Section */}
-                <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-4">
-                    <div className="flex items-center gap-2">
-                        <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                        </svg>
-                        <h3 className="text-[16px] font-bold text-black">Recipient</h3>
-                    </div>
+                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                    <div className="p-6 space-y-4">
+                        <div className="flex items-center gap-2">
+                            <svg className="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                            </svg>
+                            <h3 className="text-[16px] font-bold text-black">Recipient</h3>
+                        </div>
 
-                    {/* Recipient Name */}
-                    <input
-                        type="text"
-                        value={recipientName}
-                        onChange={(e) => setRecipientName(e.target.value)}
-                        placeholder="Recipient name"
-                        className="w-full px-4 py-3 bg-[#F3F3F3] rounded-xl text-[15px] outline-none focus:bg-white focus:ring-2 focus:ring-black transition-all"
-                    />
-
-                    {/* Recipient Phone */}
-                    <div className="flex gap-2">
-                        <select
-                            value={recipientCountryCode}
-                            onChange={(e) => setRecipientCountryCode(e.target.value)}
-                            className="px-3 py-3 bg-[#F3F3F3] rounded-xl text-[15px] outline-none focus:bg-white focus:ring-2 focus:ring-black transition-all"
-                        >
-                            <option value="+1">🇺🇸 +1</option>
-                            <option value="+44">🇬🇧 +44</option>
-                            <option value="+92">🇵🇰 +92</option>
-                        </select>
-                        <input
-                            type="tel"
-                            value={recipientPhone}
-                            onChange={(e) => setRecipientPhone(e.target.value)}
-                            placeholder="(555) 555-5555"
-                            className="flex-1 px-4 py-3 bg-[#F3F3F3] rounded-xl text-[15px] outline-none focus:bg-white focus:ring-2 focus:ring-black transition-all"
+                        {/* Recipient Name */}
+                        <Input
+                            type="text"
+                            value={recipientName}
+                            onChange={(e) => setRecipientName(e.target.value)}
+                            placeholder="Recipient name"
+                            variant="filled"
                         />
+
+                        {/* Recipient Phone */}
+                        <div className="flex gap-2">
+                            <div className="flex items-center gap-2 px-3 py-3 bg-gray-100 rounded-lg">
+                                <span className="text-xl">🇺🇸</span>
+                                <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                            <Input
+                                type="tel"
+                                value={recipientPhone}
+                                onChange={(e) => setRecipientPhone(e.target.value)}
+                                placeholder="(555) 555-5555"
+                                variant="filled"
+                                className="flex-1"
+                            />
+                        </div>
                     </div>
                 </div>
 
@@ -195,73 +280,110 @@ export function DeliveryDetailsForm({ pickupAddress, dropoffAddress, onSubmit }:
                     </button>
 
                     {dropoffExpanded && (
-                        <div className="p-4 pt-0 space-y-4">
-                            {/* Dropoff Address */}
-                            <div className="flex items-start gap-2 text-[14px] text-gray-600">
-                                <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                                </svg>
-                                <span>{dropoffAddress}</span>
+                        <div className="p-6 pt-0 space-y-4">
+                            {/* Address Display */}
+                            <div className="flex items-start gap-3">
+                                <div className="w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <svg className="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                                    </svg>
+                                </div>
+                                <div className="flex-1">
+                                    <p className="text-[15px] font-semibold text-black">{dropoffAddress.split(',')[0]}</p>
+                                    <p className="text-[13px] text-gray-600">{dropoffAddress.split(',').slice(1).join(',').trim()}</p>
+                                </div>
                             </div>
 
                             {/* Business/Building Name */}
-                            <input
+                            <Input
                                 type="text"
                                 value={dropoffBusinessName}
                                 onChange={(e) => setDropoffBusinessName(e.target.value)}
                                 placeholder="Business/building name"
-                                className="w-full px-4 py-3 bg-[#F3F3F3] rounded-xl text-[15px] outline-none focus:bg-white focus:ring-2 focus:ring-black transition-all"
+                                variant="filled"
                             />
 
                             {/* Apt/Suite/Floor */}
-                            <input
+                            <Input
                                 type="text"
                                 value={dropoffAptSuiteFloor}
                                 onChange={(e) => setDropoffAptSuiteFloor(e.target.value)}
                                 placeholder="Apt/Suite/Floor"
-                                className="w-full px-4 py-3 bg-[#F3F3F3] rounded-xl text-[15px] outline-none focus:bg-white focus:ring-2 focus:ring-black transition-all"
+                                variant="filled"
                             />
 
-                            {/* Meeting Options */}
-                            <div className="space-y-2">
-                                {[
-                                    { value: 'meet_at_curb' as MeetingOption, label: 'Meet at curb' },
-                                    { value: 'meet_at_door' as MeetingOption, label: 'Meet at door' },
-                                    { value: 'leave_at_door' as MeetingOption, label: 'Leave at door' },
-                                ].map((option) => (
-                                    <button
-                                        key={option.value}
-                                        onClick={() => setDropoffMeetingOption(option.value)}
-                                        className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all ${dropoffMeetingOption === option.value
+                            {/* Meet Location Section */}
+                            <div className="flex items-start gap-3 pt-2">
+                                <div className="w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <svg className="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z" />
+                                    </svg>
+                                </div>
+                                <div className="flex-1">
+                                    <p className="text-[15px] font-semibold text-black">
+                                        {dropoffMeetingOption === 'meet_at_curb' ? 'Meet at curb' : dropoffMeetingOption === 'meet_at_door' ? 'Meet at door' : 'Leave at door'}
+                                    </p>
+                                    <p className="text-[13px] text-gray-600 mb-3">Add a dropoff note</p>
+
+                                    {/* Where should your driver meet you? */}
+                                    <p className="text-[15px] font-medium text-black mb-3">Where should your driver meet you?</p>
+
+                                    {/* Meet Location Pills */}
+                                    <div className="flex flex-wrap gap-2 mb-4">
+                                        <button
+                                            onClick={() => setDropoffMeetingOption('meet_at_curb')}
+                                            className={`px-4 py-2 rounded-full text-[14px] font-medium transition-colors flex items-center gap-2 ${dropoffMeetingOption === 'meet_at_curb'
                                                 ? 'bg-black text-white'
-                                                : 'bg-[#F3F3F3] text-black hover:bg-[#E8E8E8]'
-                                            }`}
-                                    >
-                                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${dropoffMeetingOption === option.value ? 'border-white' : 'border-gray-400'
-                                            }`}>
-                                            {dropoffMeetingOption === option.value && (
-                                                <div className="w-2.5 h-2.5 rounded-full bg-white"></div>
-                                            )}
-                                        </div>
-                                        <span className="text-[15px] font-medium">{option.label}</span>
-                                    </button>
-                                ))}
-                            </div>
+                                                : 'bg-white text-black border border-gray-300 hover:bg-gray-50'
+                                                }`}
+                                        >
+                                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z" />
+                                            </svg>
+                                            Meet at curb
+                                        </button>
+                                        <button
+                                            onClick={() => setDropoffMeetingOption('meet_at_door')}
+                                            className={`px-4 py-2 rounded-full text-[14px] font-medium transition-colors flex items-center gap-2 ${dropoffMeetingOption === 'meet_at_door'
+                                                ? 'bg-black text-white'
+                                                : 'bg-white text-black border border-gray-300 hover:bg-gray-50'
+                                                }`}
+                                        >
+                                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                                            </svg>
+                                            Meet at door
+                                        </button>
+                                        <button
+                                            onClick={() => setDropoffMeetingOption('leave_at_door')}
+                                            className={`px-4 py-2 rounded-full text-[14px] font-medium transition-colors flex items-center gap-2 ${dropoffMeetingOption === 'leave_at_door'
+                                                ? 'bg-black text-white'
+                                                : 'bg-white text-black border border-gray-300 hover:bg-gray-50'
+                                                }`}
+                                        >
+                                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                                            </svg>
+                                            Leave at door
+                                        </button>
+                                    </div>
 
-                            {/* Dropoff Note */}
-                            <textarea
-                                value={dropoffNote}
-                                onChange={(e) => setDropoffNote(e.target.value)}
-                                placeholder="Add a dropoff note"
-                                rows={3}
-                                className="w-full px-4 py-3 bg-[#F3F3F3] rounded-xl text-[15px] outline-none focus:bg-white focus:ring-2 focus:ring-black transition-all resize-none"
-                            />
+                                    {/* Dropoff Note Textarea */}
+                                    <textarea
+                                        value={dropoffNote}
+                                        onChange={(e) => setDropoffNote(e.target.value)}
+                                        placeholder="Add a dropoff note"
+                                        rows={4}
+                                        className="w-full px-4 py-3 bg-gray-100 rounded-lg text-[15px] text-black placeholder-gray-500 outline-none focus:bg-gray-200 transition-colors resize-none"
+                                    />
+                                </div>
+                            </div>
                         </div>
                     )}
                 </div>
 
                 {/* PIN Requirement Section */}
-                <div className="bg-white rounded-xl border border-gray-200 p-4">
+                <div className="bg-white rounded-xl border border-gray-200 p-6">
                     <label className="flex items-start gap-3 cursor-pointer">
                         <input
                             type="checkbox"

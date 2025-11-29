@@ -27,23 +27,13 @@ export function TripMap({ pickup, destination, stops = [], isServiceAvailable }:
     const directionsRendererRef = useRef<any>(null);
 
     useEffect(() => {
-        // Load Google Maps script
-        const loadGoogleMaps = () => {
-            if (window.google) {
-                initializeMap();
+        // Wait for Google Maps to be loaded (loaded globally in Providers)
+        const initializeMap = () => {
+            if (!mapRef.current || !window.google) {
+                // Google Maps not loaded yet, wait and retry
+                setTimeout(initializeMap, 100);
                 return;
             }
-
-            const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places,marker&v=beta`;
-            script.async = true;
-            script.defer = true;
-            script.onload = initializeMap;
-            document.head.appendChild(script);
-        };
-
-        const initializeMap = () => {
-            if (!mapRef.current || !window.google) return;
 
             // Initialize map centered on Pakistan
             const map = new window.google.maps.Map(mapRef.current, {
@@ -361,7 +351,7 @@ export function TripMap({ pickup, destination, stops = [], isServiceAvailable }:
             }
         };
 
-        loadGoogleMaps();
+        initializeMap();
 
         // Cleanup
         return () => {

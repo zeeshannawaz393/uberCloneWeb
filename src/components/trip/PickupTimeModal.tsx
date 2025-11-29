@@ -8,7 +8,6 @@
 
 import { createPortal } from 'react-dom';
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 interface PickupTimeModalProps {
     onClose: () => void;
@@ -19,6 +18,8 @@ interface PickupTimeModalProps {
 
 export function PickupTimeModal({ onClose, onSchedule, pickupName = "Pickup Location", isOpen = true }: PickupTimeModalProps) {
     const [mounted, setMounted] = useState(false);
+    const [isClosing, setIsClosing] = useState(false);
+    const [isOpening, setIsOpening] = useState(false);
     const [view, setView] = useState<'main' | 'date'>('main');
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [selectedTime, setSelectedTime] = useState('Now');
@@ -31,6 +32,29 @@ export function PickupTimeModal({ onClose, onSchedule, pickupName = "Pickup Loca
         setMounted(true);
         return () => setMounted(false);
     }, []);
+
+    useEffect(() => {
+        if (isOpen) {
+            setIsOpening(true);
+            const timer = setTimeout(() => {
+                setIsOpening(false);
+            }, 10); // Small delay to trigger transition
+            return () => clearTimeout(timer);
+        } else {
+            setIsClosing(true);
+            const timer = setTimeout(() => {
+                setIsClosing(false);
+            }, 200); // Match transition duration
+            return () => clearTimeout(timer);
+        }
+    }, [isOpen]);
+
+    const handleClose = () => {
+        setIsClosing(true);
+        setTimeout(() => {
+            onClose();
+        }, 200); // Match transition duration
+    };
 
     const days = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
     const times = [
@@ -77,48 +101,34 @@ export function PickupTimeModal({ onClose, onSchedule, pickupName = "Pickup Loca
     const handleNext = () => {
         if (view === 'main') {
             onSchedule(selectedDate, selectedTime);
-            onClose();
+            handleClose();
         } else {
             setView('main');
         }
     };
 
-    if (!mounted) return null;
+    if (!mounted || (!isOpen && !isClosing)) return null;
 
     return createPortal(
-        <AnimatePresence>
-            {isOpen && (
+        <>
+            {(isOpen || isClosing) && (
                 <>
                     {/* Overlay */}
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.1 }}
-                        className="fixed inset-0 bg-black/50 z-[100]"
-                        onClick={onClose}
+                    <div
+                        className={`fixed inset-0 bg-black/50 z-[100] transition-opacity duration-200 ease-in-out ${isOpen && !isClosing && !isOpening ? 'opacity-100' : 'opacity-0'
+                            }`}
+                        onClick={handleClose}
                     />
 
                     {/* Modal Container */}
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-none">
-                        <motion.div
-                            layout
-                            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                            transition={{
-                                layout: { duration: 0.15, type: "spring", stiffness: 500, damping: 30, mass: 0.5 },
-                                opacity: { duration: 0.1 },
-                                scale: { type: "spring", stiffness: 500, damping: 30, mass: 0.5 },
-                                y: { type: "spring", stiffness: 500, damping: 30, mass: 0.5 }
-                            }}
-                            className="bg-white w-full max-w-[400px] rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] pointer-events-auto"
-                        >
+                        <div className={`bg-white w-full max-w-[400px] rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] pointer-events-auto transition-all duration-200 ease-in-out ${isOpen && !isClosing && !isOpening ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+                            }`}>
 
                             {/* Header */}
                             <div className="px-4 pt-4 pb-2 flex items-center justify-between flex-shrink-0">
                                 <button
-                                    onClick={() => view === 'main' ? onClose() : setView('main')}
+                                    onClick={() => view === 'main' ? handleClose() : setView('main')}
                                     className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors"
                                 >
                                     <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -126,7 +136,7 @@ export function PickupTimeModal({ onClose, onSchedule, pickupName = "Pickup Loca
                                     </svg>
                                 </button>
                                 {view === 'main' && (
-                                    <button onClick={onClose} className="text-[14px] font-medium text-black hover:opacity-70 transition-opacity">
+                                    <button onClick={handleClose} className="text-[14px] font-medium text-black hover:opacity-70 transition-opacity">
                                         Clear
                                     </button>
                                 )}
@@ -136,12 +146,7 @@ export function PickupTimeModal({ onClose, onSchedule, pickupName = "Pickup Loca
                             <div className="px-6 pb-6 overflow-y-auto">
 
                                 {view === 'main' && (
-                                    <motion.div
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: -20 }}
-                                        transition={{ duration: 0.1 }}
-                                    >
+                                    <div>
                                         <h2 className="text-[32px] font-bold text-black leading-tight mb-2">
                                             When do you want to be picked up?
                                         </h2>
@@ -238,16 +243,11 @@ export function PickupTimeModal({ onClose, onSchedule, pickupName = "Pickup Loca
                                                 </p>
                                             </div>
                                         </div>
-                                    </motion.div>
+                                    </div>
                                 )}
 
                                 {view === 'date' && (
-                                    <motion.div
-                                        initial={{ opacity: 0, x: 20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: 20 }}
-                                        transition={{ duration: 0.1 }}
-                                    >
+                                    <div>
                                         <div className="flex items-center justify-between mb-6 px-2">
                                             <button onClick={handlePrevMonth} className="p-2 hover:bg-gray-100 rounded-full">
                                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -290,7 +290,7 @@ export function PickupTimeModal({ onClose, onSchedule, pickupName = "Pickup Loca
                                                 </div>
                                             ))}
                                         </div>
-                                    </motion.div>
+                                    </div>
                                 )}
 
                                 {/* Footer Button */}
@@ -301,11 +301,11 @@ export function PickupTimeModal({ onClose, onSchedule, pickupName = "Pickup Loca
                                     {view === 'main' ? 'Next' : 'Done'}
                                 </button>
                             </div>
-                        </motion.div>
+                        </div>
                     </div>
                 </>
             )}
-        </AnimatePresence>,
+        </>,
         document.body
     );
 }

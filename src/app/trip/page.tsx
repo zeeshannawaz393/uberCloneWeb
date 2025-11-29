@@ -23,17 +23,72 @@ function TripPageContent() {
     const searchParams = useSearchParams();
     const pickup = searchParams.get('pickup');
     const destination = searchParams.get('destination');
-    const [tripState, setTripState] = useState<'booking' | 'searching' | 'on_trip' | 'completed'>('booking');
+
+    // Get trip state from URL or default to 'booking'
+    const urlTripState = searchParams.get('state') as 'booking' | 'searching' | 'on_trip' | 'completed' | null;
+    const [tripState, setTripStateInternal] = useState<'booking' | 'searching' | 'on_trip' | 'completed'>(
+        urlTripState || 'booking'
+    );
+
     const [showPickupConfirm, setShowPickupConfirm] = useState(false);
     const [isLoadingRideOptions, setIsLoadingRideOptions] = useState(false);
     const [stops, setStops] = useState<string[]>([]); // Track intermediate stops
 
-    // Service mode state
-    const [serviceMode, setServiceMode] = useState<'ride' | 'send' | 'receive'>('ride');
-    const [selectedCourier, setSelectedCourier] = useState<string | undefined>();
+    // Service mode state - read from URL or default to 'ride'
+    const urlServiceMode = searchParams.get('mode') as 'ride' | 'send' | 'receive' | null;
+    const [serviceMode, setServiceModeInternal] = useState<'ride' | 'send' | 'receive'>(
+        urlServiceMode || 'ride'
+    );
+
+    const urlSelectedCourier = searchParams.get('courier');
+    const [selectedCourier, setSelectedCourierInternal] = useState<string | undefined>(
+        urlSelectedCourier || undefined
+    );
+
     const [showDeliveryDetails, setShowDeliveryDetails] = useState(false);
 
     const isDeliveryMode = serviceMode === 'send' || serviceMode === 'receive';
+
+    // Function to update service mode and URL
+    const setServiceMode = (newMode: 'ride' | 'send' | 'receive') => {
+        setServiceModeInternal(newMode);
+
+        // Update URL with new mode
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('mode', newMode);
+
+        // Reset courier selection when switching modes
+        if (newMode === 'ride') {
+            params.delete('courier');
+            setSelectedCourierInternal(undefined);
+        }
+
+        window.history.replaceState({}, '', `?${params.toString()}`);
+    };
+
+    // Function to update selected courier and URL
+    const setSelectedCourier = (courierId: string | undefined) => {
+        setSelectedCourierInternal(courierId);
+
+        // Update URL with selected courier
+        const params = new URLSearchParams(searchParams.toString());
+        if (courierId) {
+            params.set('courier', courierId);
+        } else {
+            params.delete('courier');
+        }
+        window.history.replaceState({}, '', `?${params.toString()}`);
+    };
+
+    // Function to update trip state and URL
+    const setTripState = (newState: 'booking' | 'searching' | 'on_trip' | 'completed') => {
+        setTripStateInternal(newState);
+
+        // Update URL with new state
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('state', newState);
+        window.history.replaceState({}, '', `?${params.toString()}`);
+    };
 
     // Reset trip state when pickup or destination changes
     useEffect(() => {
@@ -223,6 +278,7 @@ function TripPageContent() {
                         destination={destination}
                         driverName="Alex"
                         rideName="UberX"
+                        isDelivery={isDeliveryMode}
                     />
                 )}
             </div>

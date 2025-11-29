@@ -8,9 +8,10 @@ interface TripReceiptProps {
     destination: string;
     driverName: string;
     rideName: string;
+    isDelivery?: boolean; // New prop to indicate delivery mode
 }
 
-export function TripReceipt({ pickup, destination, driverName, rideName }: TripReceiptProps) {
+export function TripReceipt({ pickup, destination, driverName, rideName, isDelivery = false }: TripReceiptProps) {
     const router = useRouter();
     const [rating, setRating] = useState(0);
     const [hoveredRating, setHoveredRating] = useState(0);
@@ -43,7 +44,7 @@ export function TripReceipt({ pickup, destination, driverName, rideName }: TripR
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm">
-            <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto scrollbar-hide">
                 {/* Header */}
                 <div className="p-8 pb-6 text-center border-b border-gray-100">
                     <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -51,13 +52,19 @@ export function TripReceipt({ pickup, destination, driverName, rideName }: TripR
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                     </div>
-                    <h2 className="text-3xl font-bold text-black mb-2">Trip complete</h2>
-                    <p className="text-gray-500">Thank you for riding with Uber</p>
+                    <h2 className="text-3xl font-bold text-black mb-2">
+                        {isDelivery ? 'Delivery complete' : 'Trip complete'}
+                    </h2>
+                    <p className="text-gray-500">
+                        {isDelivery ? 'Thank you for using Uber' : 'Thank you for riding with Uber'}
+                    </p>
                 </div>
 
                 {/* Rating Section */}
                 <div className="p-8 border-b border-gray-100">
-                    <h3 className="text-lg font-bold text-black mb-2 text-center">Rate your driver</h3>
+                    <h3 className="text-lg font-bold text-black mb-2 text-center">
+                        {isDelivery ? 'Rate your courier' : 'Rate your driver'}
+                    </h3>
                     <p className="text-sm text-gray-500 mb-6 text-center">{driverName}</p>
 
                     {/* Star Rating */}
@@ -72,8 +79,8 @@ export function TripReceipt({ pickup, destination, driverName, rideName }: TripR
                             >
                                 <svg
                                     className={`w-12 h-12 ${star <= (hoveredRating || rating)
-                                            ? 'text-yellow-400 fill-yellow-400'
-                                            : 'text-gray-300'
+                                        ? 'text-yellow-400 fill-yellow-400'
+                                        : 'text-gray-300'
                                         }`}
                                     fill="none"
                                     stroke="currentColor"
@@ -100,8 +107,8 @@ export function TripReceipt({ pickup, destination, driverName, rideName }: TripR
                                         key={chip}
                                         onClick={() => toggleChip(chip)}
                                         className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedChips.includes(chip)
-                                                ? 'bg-black text-white'
-                                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                            ? 'bg-black text-white'
+                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                             }`}
                                     >
                                         {chip}
@@ -128,7 +135,9 @@ export function TripReceipt({ pickup, destination, driverName, rideName }: TripR
 
                 {/* Receipt Summary */}
                 <div className="p-8 border-b border-gray-100">
-                    <h3 className="text-lg font-bold text-black mb-4">Trip summary</h3>
+                    <h3 className="text-lg font-bold text-black mb-4">
+                        {isDelivery ? 'Delivery summary' : 'Trip summary'}
+                    </h3>
 
                     {/* Route */}
                     <div className="space-y-3 mb-6">
@@ -151,7 +160,7 @@ export function TripReceipt({ pickup, destination, driverName, rideName }: TripR
                     {/* Ride Details */}
                     <div className="space-y-3 mb-6">
                         <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Ride type</span>
+                            <span className="text-gray-600">{isDelivery ? 'Delivery type' : 'Ride type'}</span>
                             <span className="font-medium text-black">{rideName}</span>
                         </div>
                         <div className="flex justify-between text-sm">
@@ -167,7 +176,7 @@ export function TripReceipt({ pickup, destination, driverName, rideName }: TripR
                     {/* Price Breakdown */}
                     <div className="space-y-2 pt-4 border-t border-gray-100">
                         <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Trip fare</span>
+                            <span className="text-gray-600">{isDelivery ? 'Delivery fare' : 'Trip fare'}</span>
                             <span className="text-black">£24.50</span>
                         </div>
                         <div className="flex justify-between text-sm">
@@ -199,8 +208,8 @@ export function TripReceipt({ pickup, destination, driverName, rideName }: TripR
                     <button
                         onClick={handleDone}
                         className={`w-full py-4 rounded-xl text-lg font-bold transition-colors ${rating > 0
-                                ? 'bg-black text-white hover:bg-gray-800'
-                                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                            ? 'bg-black text-white hover:bg-gray-800'
+                            : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                             }`}
                     >
                         Done

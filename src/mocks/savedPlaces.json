@@ -1,0 +1,17 @@
+{
+    "home": {
+        "id": "home",
+        "label": "Home",
+        "address": "123 Main Street, London, UK",
+        "icon": "home",
+        "editable": true
+    },
+    "work": {
+        "id": "work",
+        "label": "Work",
+        "address": "456 Business Ave, London, UK",
+        "icon": "work",
+        "editable": true
+    },
+    "custom": []
+}

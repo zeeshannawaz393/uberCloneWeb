@@ -7,7 +7,6 @@
 
 import { createPortal } from 'react-dom';
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Rider } from './TripSidebar';
 
 interface RiderModalProps {
@@ -19,6 +18,8 @@ interface RiderModalProps {
 
 export function RiderModal({ selectedRider, onSelect, onClose, isOpen }: RiderModalProps) {
     const [mounted, setMounted] = useState(false);
+    const [isClosing, setIsClosing] = useState(false);
+    const [isOpening, setIsOpening] = useState(false);
     const [view, setView] = useState<'list' | 'form'>('list');
     const [riders, setRiders] = useState<Rider[]>([
         { id: 'me', name: 'Me', type: 'me' }
@@ -34,6 +35,29 @@ export function RiderModal({ selectedRider, onSelect, onClose, isOpen }: RiderMo
         return () => setMounted(false);
     }, []);
 
+    useEffect(() => {
+        if (isOpen) {
+            setIsOpening(true);
+            const timer = setTimeout(() => {
+                setIsOpening(false);
+            }, 10);
+            return () => clearTimeout(timer);
+        } else {
+            setIsClosing(true);
+            const timer = setTimeout(() => {
+                setIsClosing(false);
+            }, 200);
+            return () => clearTimeout(timer);
+        }
+    }, [isOpen]);
+
+    const handleClose = () => {
+        setIsClosing(true);
+        setTimeout(() => {
+            onClose();
+        }, 200);
+    };
+
     const handleAddRider = () => {
         if (!firstName || !lastName || !phone) return;
 
@@ -47,7 +71,7 @@ export function RiderModal({ selectedRider, onSelect, onClose, isOpen }: RiderMo
         setRiders([...riders, newRider]);
         onSelect(newRider);
         setView('list');
-        onClose();
+        handleClose();
 
         // Reset form
         setFirstName('');
@@ -55,38 +79,30 @@ export function RiderModal({ selectedRider, onSelect, onClose, isOpen }: RiderMo
         setPhone('');
     };
 
-    if (!mounted) return null;
+    if (!mounted || (!isOpen && !isClosing)) return null;
 
     return createPortal(
-        <AnimatePresence>
-            {isOpen && (
+        <>
+            {(isOpen || isClosing) && (
                 <>
                     {/* Overlay */}
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.1 }}
-                        className="fixed inset-0 bg-black bg-opacity-50 z-[100]"
-                        onClick={onClose}
+                    <div
+                        className={`fixed inset-0 bg-black bg-opacity-50 z-[100] transition-opacity duration-200 ease-in-out ${isOpen && !isClosing && !isOpening ? 'opacity-100' : 'opacity-0'
+                            }`}
+                        onClick={handleClose}
                     />
 
                     {/* Modal */}
                     <div className="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                            transition={{ type: "spring", stiffness: 500, damping: 30, mass: 0.5 }}
-                            className="w-[480px] bg-white rounded-2xl shadow-2xl p-6 pointer-events-auto overflow-hidden"
-                        >
+                        <div className={`w-[480px] bg-white rounded-2xl shadow-2xl p-6 pointer-events-auto overflow-hidden transition-all duration-200 ease-in-out ${isOpen && !isClosing && !isOpening ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+                            }`}>
                             {view === 'list' ? (
                                 <>
                                     {/* Header */}
                                     <div className="flex items-center justify-between mb-6">
                                         <h3 className="text-xl font-bold text-black">Choose a rider</h3>
                                         <button
-                                            onClick={onClose}
+                                            onClick={handleClose}
                                             className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors"
                                         >
                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -102,7 +118,7 @@ export function RiderModal({ selectedRider, onSelect, onClose, isOpen }: RiderMo
                                                 key={rider.id}
                                                 onClick={() => {
                                                     onSelect(rider);
-                                                    onClose();
+                                                    handleClose();
                                                 }}
                                                 className="w-full flex items-center justify-between px-5 py-4 bg-[#F6F6F6] rounded-lg hover:bg-[#EEEEEE] transition-colors"
                                             >
@@ -145,7 +161,7 @@ export function RiderModal({ selectedRider, onSelect, onClose, isOpen }: RiderMo
 
                                     {/* Done Button */}
                                     <button
-                                        onClick={onClose}
+                                        onClick={handleClose}
                                         className="w-full bg-black text-white py-3.5 rounded-lg text-[16px] font-semibold hover:bg-gray-800 transition-colors"
                                     >
                                         Done
@@ -227,11 +243,11 @@ export function RiderModal({ selectedRider, onSelect, onClose, isOpen }: RiderMo
                                     </button>
                                 </>
                             )}
-                        </motion.div>
+                        </div>
                     </div>
                 </>
             )}
-        </AnimatePresence>,
+        </>,
         document.body
     );
 }
