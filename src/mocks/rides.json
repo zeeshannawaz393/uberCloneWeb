@@ -1,0 +1,42 @@
+[
+    {
+        "id": "ride-1",
+        "vehicleType": "economy",
+        "name": "UberX",
+        "description": "Affordable rides for everyday trips",
+        "capacity": 4,
+        "estimatedPrice": 12.50,
+        "eta": 5,
+        "available": true
+    },
+    {
+        "id": "ride-2",
+        "vehicleType": "comfort",
+        "name": "Comfort",
+        "description": "Newer cars with extra legroom",
+        "capacity": 4,
+        "estimatedPrice": 18.00,
+        "eta": 7,
+        "available": true
+    },
+    {
+        "id": "ride-3",
+        "vehicleType": "premium",
+        "name": "Black",
+        "description": "High-end cars with professional drivers",
+        "capacity": 4,
+        "estimatedPrice": 28.00,
+        "eta": 10,
+        "available": true
+    },
+    {
+        "id": "ride-4",
+        "vehicleType": "xl",
+        "name": "UberXL",
+        "description": "Affordable rides for groups up to 6",
+        "capacity": 6,
+        "estimatedPrice": 22.00,
+        "eta": 8,
+        "available": false
+    }
+]

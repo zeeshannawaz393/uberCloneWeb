@@ -1,0 +1,32 @@
+[
+    {
+        "id": "user-1",
+        "username": "john_doe",
+        "email": "john@example.com",
+        "phone": "+11234567890",
+        "countryCode": "+1",
+        "role": "rider",
+        "avatar": null,
+        "createdAt": "2024-01-01T00:00:00Z"
+    },
+    {
+        "id": "user-2",
+        "username": "jane_driver",
+        "email": "jane@example.com",
+        "phone": "+11234567891",
+        "countryCode": "+1",
+        "role": "driver",
+        "avatar": null,
+        "createdAt": "2024-01-01T00:00:00Z"
+    },
+    {
+        "id": "user-3",
+        "username": "bob_courier",
+        "email": "bob@example.com",
+        "phone": "+11234567892",
+        "countryCode": "+1",
+        "role": "courier",
+        "avatar": null,
+        "createdAt": "2024-01-01T00:00:00Z"
+    }
+]
