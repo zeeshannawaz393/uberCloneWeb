@@ -1,6 +1,6 @@
 /**
  * Hero Section Component
- * Main hero with location picker
+ * Main hero with location picker - Responsive
  */
 
 'use client';
@@ -9,19 +9,19 @@ import { LocationPicker } from '@/components/booking/LocationPicker';
 
 export function HeroSection() {
     return (
-        <section className="relative min-h-[600px] bg-white pt-[64px]">
-            <div className="max-w-[1280px] mx-auto px-4 lg:px-16 py-16">
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <section className="relative min-h-[500px] md:min-h-[600px] bg-white pt-[64px]">
+            <div className="max-w-[1280px] mx-auto px-4 sm:px-6 md:px-8 lg:px-16 py-8 sm:py-12 md:py-16">
+                <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
                     {/* Left: Heading + Location Picker */}
-                    <div className="space-y-8">
-                        <h1 className="text-[52px] leading-[1.1] font-bold text-black">
-                            Get ready for your<br />first trip
+                    <div className="space-y-6 md:space-y-8">
+                        <h1 className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[52px] leading-[1.1] font-bold text-black">
+                            Get ready for your first trip
                         </h1>
 
                         <LocationPicker />
                     </div>
 
-                    {/* Right: Illustration */}
+                    {/* Right: Illustration - Hidden on mobile/tablet */}
                     <div className="hidden lg:block">
                         <div className="w-full h-[500px] bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl flex items-center justify-center">
                             <div className="text-center">

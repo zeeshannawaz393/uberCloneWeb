@@ -1,5 +1,5 @@
 /**
- * Screens 2-5: OTP Verification
+ * Screens 2-5: OTP Verification - Responsive
  * Handles normal, error, and resent states
  */
 
@@ -69,27 +69,27 @@ export default function VerifyCodePage() {
     };
 
     return (
-        <div className="bg-white rounded-lg p-12 shadow-sm">
+        <div className="bg-white rounded-lg p-5 sm:p-8 md:p-12 shadow-sm">
             {/* Success Notification */}
             {otpResent && (
-                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-                    <p className="text-sm text-green-800 text-center">
+                <div className="mb-5 sm:mb-6 p-3 sm:p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <p className="text-[13px] sm:text-sm text-green-800 text-center">
                         Your code has been re-sent
                     </p>
                 </div>
             )}
 
-            {/* Title */}
-            <h1 className="text-2xl font-bold text-center mb-2">
+            {/* Title - Responsive */}
+            <h1 className="text-xl sm:text-2xl font-bold text-center mb-2">
                 Enter the 4-digit code sent to you at:
             </h1>
 
-            <p className="text-center text-gray-700 mb-8">
+            <p className="text-center text-[15px] sm:text-base text-gray-700 mb-6 sm:mb-8">
                 {emailOrPhone}
             </p>
 
             {/* OTP Input */}
-            <div className="mb-6">
+            <div className="mb-5 sm:mb-6">
                 <OTPInput
                     value={otpCode}
                     onChange={setOtpCode}
@@ -99,20 +99,20 @@ export default function VerifyCodePage() {
 
             {/* Error Message */}
             {otpError && (
-                <p className="text-sm text-red-600 text-center mb-4">
+                <p className="text-[13px] sm:text-sm text-red-600 text-center mb-4">
                     {otpError}
                 </p>
             )}
 
             {/* Tip */}
-            <p className="text-sm text-center text-gray-600 mb-6">
+            <p className="text-[13px] sm:text-sm text-center text-gray-600 mb-5 sm:mb-6">
                 Tip: Be sure to check your inbox and spam folders
             </p>
 
             {/* Resend Button */}
             <button
                 onClick={() => setShowResendModal(true)}
-                className="text-sm text-black underline mx-auto block mb-8 hover:text-gray-700"
+                className="text-[13px] sm:text-sm text-black underline mx-auto block mb-6 sm:mb-8 hover:text-gray-700"
             >
                 Resend
             </button>
@@ -131,7 +131,7 @@ export default function VerifyCodePage() {
                 <button
                     onClick={handleNext}
                     disabled={!isNextEnabled}
-                    className="bg-black text-white px-8 py-2.5 rounded-full font-medium hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2"
+                    className="h-12 bg-black text-white px-6 sm:px-8 rounded-full text-[15px] sm:text-base font-medium hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2"
                 >
                     Next
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -1,5 +1,5 @@
 /**
- * Screen 9: Choose Security Method
+ * Screen 9: Choose Security Method - Responsive
  * Phone or Passkey authentication selection
  */
 
@@ -26,18 +26,18 @@ export default function SecurityMethodPage() {
     };
 
     return (
-        <div className="bg-white rounded-lg p-12 shadow-sm">
-            {/* Title */}
-            <h1 className="text-2xl font-bold mb-2">
+        <div className="bg-white rounded-lg p-5 sm:p-8 md:p-12 shadow-sm">
+            {/* Title - Responsive */}
+            <h1 className="text-xl sm:text-2xl font-bold mb-2">
                 Keep your account secure
             </h1>
 
-            <p className="text-gray-600 text-sm mb-8">
+            <p className="text-gray-600 text-[13px] sm:text-sm mb-6 sm:mb-8">
                 To prevent unauthorized access to your account, choose an authentication method to protect your account.
             </p>
 
             {/* Radio Options */}
-            <div className="space-y-4 mb-8">
+            <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
                 <RadioCard
                     id="phone"
                     name="security-method"
@@ -60,10 +60,10 @@ export default function SecurityMethodPage() {
                 />
             </div>
 
-            {/* Next Button */}
+            {/* Next Button - Consistent Height */}
             <button
                 onClick={handleNext}
-                className="w-full bg-black text-white py-3 rounded-full font-medium hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+                className="w-full h-12 bg-black text-white rounded-full text-[15px] sm:text-base font-medium hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
             >
                 Next
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -36,11 +36,11 @@ export function CountrySelector({ value, onChange }: CountrySelectorProps) {
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-2 px-4 py-3 border-2 border-gray-300 rounded-lg hover:border-gray-400 transition-colors bg-white"
+                className="h-12 flex items-center gap-2 px-3 sm:px-4 border-2 border-gray-300 rounded-lg hover:border-gray-400 transition-colors bg-white"
             >
-                <span className="text-2xl">{selectedCountry.flag}</span>
-                <span className="font-medium">{selectedCountry.code}</span>
-                <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span className="text-xl sm:text-2xl">{selectedCountry.flag}</span>
+                <span className="text-[14px] sm:text-base font-medium">{selectedCountry.code}</span>
+                <svg className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
             </button>

@@ -1,5 +1,5 @@
 /**
- * Screen 10: Phone Number Entry
+ * Screen 10: Phone Number Entry - Responsive
  * Final screen - phone number for auth + notifications
  */
 
@@ -34,19 +34,19 @@ export default function PhoneNumberPage() {
     };
 
     return (
-        <div className="bg-white rounded-lg p-12 shadow-sm">
-            {/* Title */}
-            <h1 className="text-2xl font-bold mb-2">
+        <div className="bg-white rounded-lg p-5 sm:p-8 md:p-12 shadow-sm">
+            {/* Title - Responsive */}
+            <h1 className="text-xl sm:text-2xl font-bold mb-2">
                 Phone number
             </h1>
 
-            <p className="text-gray-600 text-sm mb-8">
+            <p className="text-gray-600 text-[13px] sm:text-sm mb-6 sm:mb-8">
                 You'll use this number to get notifications, sign in and recover your account.
             </p>
 
-            {/* Phone Input */}
+            {/* Phone Input - Consistent Height */}
             <div className="mb-2">
-                <div className="flex gap-3">
+                <div className="flex gap-2 sm:gap-3">
                     <CountrySelector
                         value={country}
                         onChange={setCountry}
@@ -57,20 +57,20 @@ export default function PhoneNumberPage() {
                         placeholder="1234567890"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors"
+                        className="flex-1 h-12 px-4 text-[15px] sm:text-base border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors"
                     />
                 </div>
             </div>
 
-            <p className="text-sm text-gray-600 mb-8">
+            <p className="text-[13px] sm:text-sm text-gray-600 mb-6 sm:mb-8">
                 A verification code will be sent to this number
             </p>
 
-            {/* Update Button */}
+            {/* Update Button - Consistent Height */}
             <button
                 onClick={handleUpdate}
                 disabled={!phone.trim()}
-                className="w-full bg-black text-white py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="w-full h-12 bg-black text-white rounded-lg text-[15px] sm:text-base font-medium hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
                 Update
             </button>
