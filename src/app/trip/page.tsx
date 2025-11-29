@@ -10,11 +10,14 @@ import { Suspense, useState, useEffect } from 'react';
 import { TripSidebar } from '@/components/trip/TripSidebar';
 import { TripMap } from '@/components/trip/TripMap';
 import { RideOptions } from '@/components/trip/RideOptions';
+import { CourierOptions } from '@/components/trip/CourierOptions';
+import { DeliveryDetailsForm } from '@/components/trip/DeliveryDetailsForm';
 import { ErrorState } from '@/components/trip/ErrorState';
 import { RideStatusCard } from '@/components/trip/RideStatusCard';
 import { TripReceipt } from '@/components/trip/TripReceipt';
 import { ConfirmPickupModal } from '@/components/trip/ConfirmPickupModal';
 import { Header } from '@/components/navigation/Header';
+import { DeliveryDetails } from '@/types/delivery';
 
 function TripPageContent() {
     const searchParams = useSearchParams();
@@ -24,6 +27,13 @@ function TripPageContent() {
     const [showPickupConfirm, setShowPickupConfirm] = useState(false);
     const [isLoadingRideOptions, setIsLoadingRideOptions] = useState(false);
     const [stops, setStops] = useState<string[]>([]); // Track intermediate stops
+
+    // Service mode state
+    const [serviceMode, setServiceMode] = useState<'ride' | 'send' | 'receive'>('ride');
+    const [selectedCourier, setSelectedCourier] = useState<string | undefined>();
+    const [showDeliveryDetails, setShowDeliveryDetails] = useState(false);
+
+    const isDeliveryMode = serviceMode === 'send' || serviceMode === 'receive';
 
     // Reset trip state when pickup or destination changes
     useEffect(() => {
@@ -64,6 +74,18 @@ function TripPageContent() {
         }
     }, [tripState]);
 
+    // Handlers for delivery mode
+    const handleCourierSelect = (courierId: string) => {
+        setSelectedCourier(courierId);
+        setShowDeliveryDetails(true);
+    };
+
+    const handleDeliverySubmit = (details: DeliveryDetails) => {
+        console.log('Delivery details:', details);
+        // TODO: Submit delivery request
+        setShowPickupConfirm(true); // Show confirmation modal
+    };
+
     if (!isServiceAvailable) {
         return (
             <div className="flex flex-col h-screen bg-white">
@@ -92,6 +114,8 @@ function TripPageContent() {
                             pickup={pickup}
                             destination={destination}
                             onStopsChange={setStops}
+                            serviceMode={serviceMode}
+                            onServiceModeChange={setServiceMode}
                         />
                     )}
 
@@ -123,7 +147,22 @@ function TripPageContent() {
                                 ))}
                                 <div className="h-12 bg-gray-200 rounded-xl mt-6"></div>
                             </div>
+                        ) : isDeliveryMode ? (
+                            // Delivery Mode: Show courier options or delivery details form
+                            showDeliveryDetails && selectedCourier ? (
+                                <DeliveryDetailsForm
+                                    pickupAddress={pickup}
+                                    dropoffAddress={destination}
+                                    onSubmit={handleDeliverySubmit}
+                                />
+                            ) : (
+                                <CourierOptions
+                                    selectedCourier={selectedCourier}
+                                    onSelect={handleCourierSelect}
+                                />
+                            )
                         ) : (
+                            // Ride Mode: Show ride options
                             <RideOptions
                                 key={`${pickup}-${destination}`}
                                 onRequestClick={() => setShowPickupConfirm(true)}

@@ -1,0 +1,29 @@
+{
+    "courier": {
+        "id": "courier",
+        "name": "Courier",
+        "description": "15 mins away • 23 lbs dropoff",
+        "time": "15 mins away",
+        "weight": "23 lbs dropoff",
+        "price": 11.14,
+        "image": "/images/courier.png"
+    },
+    "courier_saver": {
+        "id": "courier_saver",
+        "name": "Courier Saver",
+        "description": "25 mins away • 23 lbs dropoff",
+        "time": "25 mins away",
+        "weight": "23 lbs dropoff",
+        "price": 8.04,
+        "image": "/images/courier.png"
+    },
+    "courier_super_saver": {
+        "id": "courier_super_saver",
+        "name": "Courier Super Saver",
+        "description": "35 mins away • 23 lbs dropoff",
+        "time": "35 mins away",
+        "weight": "23 lbs dropoff",
+        "price": 6.20,
+        "image": "/images/courier.png"
+    }
+}

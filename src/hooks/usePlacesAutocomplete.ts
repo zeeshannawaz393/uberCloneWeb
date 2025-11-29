@@ -17,7 +17,7 @@ export function usePlacesAutocomplete(
     options: PlacesAutocompleteOptions = {}
 ) {
     const { debounceMs = 300, componentRestrictions } = options;
-    const [predictions, setPredictions] = useState<string[]>([]);
+    const [predictions, setPredictions] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const serviceRef = useRef<any>(null);
@@ -82,9 +82,8 @@ export function usePlacesAutocomplete(
                     setLoading(false);
 
                     if (status === window.google.maps.places.PlacesServiceStatus.OK && predictions) {
-                        // Extract description from predictions
-                        const suggestions = predictions.map((p) => p.description);
-                        setPredictions(suggestions);
+                        // Return full prediction objects with structured_formatting
+                        setPredictions(predictions);
                         setError(null);
                     } else if (status === window.google.maps.places.PlacesServiceStatus.ZERO_RESULTS) {
                         setPredictions([]);
