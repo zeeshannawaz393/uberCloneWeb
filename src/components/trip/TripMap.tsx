@@ -12,6 +12,10 @@ interface TripMapProps {
     destination: string;
     stops?: string[]; // Optional array of intermediate stops
     isServiceAvailable: boolean;
+    onEditPickup?: () => void;
+    onEditDestination?: () => void;
+    onEditStop?: (index: number) => void;
+    showLocationCards?: boolean; // Whether to show location cards (mobile only)
 }
 
 declare global {
@@ -20,11 +24,22 @@ declare global {
     }
 }
 
-export function TripMap({ pickup, destination, stops = [], isServiceAvailable }: TripMapProps) {
+export function TripMap({
+    pickup,
+    destination,
+    stops = [],
+    isServiceAvailable,
+    onEditPickup,
+    onEditDestination,
+    onEditStop,
+    showLocationCards = false
+}: TripMapProps) {
     const mapRef = useRef<HTMLDivElement>(null);
     const mapInstanceRef = useRef<any>(null);
     const directionsServiceRef = useRef<any>(null);
     const directionsRendererRef = useRef<any>(null);
+    const pickupOverlayRef = useRef<any>(null);
+    const destinationOverlayRef = useRef<any>(null);
 
     useEffect(() => {
         // Wait for Google Maps to be loaded (loaded globally in Providers)
@@ -110,6 +125,98 @@ export function TripMap({ pickup, destination, stops = [], isServiceAvailable }:
             return content;
         };
 
+        // Create custom overlay for location cards
+        const createLocationCardOverlay = (
+            position: any,
+            label: string,
+            address: string,
+            onClick: () => void,
+            hasETA: boolean
+        ) => {
+            class LocationCardOverlay extends window.google.maps.OverlayView {
+                position: any;
+                containerDiv: HTMLDivElement | null = null;
+
+                constructor(pos: any) {
+                    super();
+                    this.position = pos;
+                }
+
+                onAdd() {
+                    const panes = this.getPanes();
+                    if (!panes) return;
+
+                    // Create container
+                    this.containerDiv = document.createElement('div');
+                    this.containerDiv.style.position = 'absolute';
+                    this.containerDiv.style.cursor = 'pointer';
+
+                    // Create card content
+                    if (hasETA) {
+                        // Pickup card with ETA badge
+                        this.containerDiv.innerHTML = `
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="background: black; color: white; padding: 6px 10px; border-radius: 9999px; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+                                    <svg style="width: 12px; height: 12px;" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                                    </svg>
+                                    <span style="font-size: 12px; font-weight: 600;">3 min</span>
+                                </div>
+                                <div style="background: white; padding: 10px 12px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                                    <div>
+                                        <div style="font-size: 11px; color: #666; line-height: 1.2; margin-bottom: 2px;">${label}</div>
+                                        <div style="font-size: 14px; font-weight: 500; line-height: 1.2; white-space: nowrap;">${address}</div>
+                                    </div>
+                                    <svg style="width: 16px; height: 16px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        // Destination card
+                        this.containerDiv.innerHTML = `
+                            <div style="background: white; padding: 10px 12px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: space-between; gap: 8px; max-width: 240px;">
+                                <div style="flex: 1; min-width: 0;">
+                                    <div style="font-size: 11px; color: #666; line-height: 1.2; margin-bottom: 2px;">${label}</div>
+                                    <div style="font-size: 14px; font-weight: 500; line-height: 1.2;">${address}</div>
+                                </div>
+                                <svg style="width: 16px; height: 16px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </div>
+                        `;
+                    }
+
+                    this.containerDiv.addEventListener('click', onClick);
+                    panes.floatPane.appendChild(this.containerDiv);
+                }
+
+                draw() {
+                    if (!this.containerDiv) return;
+
+                    const projection = this.getProjection();
+                    if (!projection) return;
+
+                    const point = projection.fromLatLngToDivPixel(this.position);
+                    if (!point) return;
+
+                    // Position the card above the marker
+                    this.containerDiv.style.left = point.x + 'px';
+                    this.containerDiv.style.top = (point.y - 60) + 'px'; // Offset above marker
+                }
+
+                onRemove() {
+                    if (this.containerDiv) {
+                        this.containerDiv.parentNode?.removeChild(this.containerDiv);
+                        this.containerDiv = null;
+                    }
+                }
+            }
+
+            return new LocationCardOverlay(position);
+        };
+
         const calculateRoute = () => {
             if (!directionsServiceRef.current || !directionsRendererRef.current) {
                 console.log('Directions service not ready');
@@ -165,6 +272,53 @@ export function TripMap({ pickup, destination, stops = [], isServiceAvailable }:
                         title: 'Destination: ' + destination,
                     });
 
+                    // Create location card overlays if enabled (mobile)
+                    if (showLocationCards && onEditPickup && onEditDestination) {
+                        console.log('Creating location card overlays...');
+
+                        // Clean up old overlays
+                        if (pickupOverlayRef.current) {
+                            pickupOverlayRef.current.setMap(null);
+                        }
+                        if (destinationOverlayRef.current) {
+                            destinationOverlayRef.current.setMap(null);
+                        }
+
+                        // Helper to get first 2 words
+                        const getShortAddress = (addr: string) => {
+                            const parts = addr.split(',')[0].trim();
+                            return parts.split(' ').slice(0, 2).join(' ');
+                        };
+
+                        // Create pickup card overlay
+                        const pickupPosition = route.legs[0].start_location;
+                        console.log('Creating pickup overlay at:', pickupPosition);
+                        pickupOverlayRef.current = createLocationCardOverlay(
+                            pickupPosition,
+                            'From',
+                            getShortAddress(pickup),
+                            onEditPickup,
+                            true // has ETA badge
+                        );
+                        pickupOverlayRef.current.setMap(mapInstanceRef.current);
+
+                        // Create destination card overlay
+                        const destPosition = lastLeg.end_location;
+                        console.log('Creating destination overlay at:', destPosition);
+                        destinationOverlayRef.current = createLocationCardOverlay(
+                            destPosition,
+                            'To',
+                            getShortAddress(destination) + '...',
+                            onEditDestination,
+                            false // no ETA badge
+                        );
+                        destinationOverlayRef.current.setMap(mapInstanceRef.current);
+
+                        console.log('Location card overlays created successfully');
+                    } else {
+                        console.log('Location cards not enabled. showLocationCards:', showLocationCards, 'onEditPickup:', !!onEditPickup, 'onEditDestination:', !!onEditDestination);
+                    }
+
                     // Fit map bounds to show entire route
                     const bounds = new window.google.maps.LatLngBounds();
 
@@ -215,6 +369,51 @@ export function TripMap({ pickup, destination, stops = [], isServiceAvailable }:
                         if (allLocations[i] && allLocations[i + 1]) {
                             drawFallbackLine(allLocations[i], allLocations[i + 1]);
                         }
+                    }
+
+                    // Create location card overlays after all geocoding is complete (mobile)
+                    if (showLocationCards && onEditPickup && onEditDestination && allLocations[0] && allLocations[allLocations.length - 1]) {
+                        console.log('Creating location card overlays in fallback mode...');
+
+                        // Clean up old overlays
+                        if (pickupOverlayRef.current) {
+                            pickupOverlayRef.current.setMap(null);
+                        }
+                        if (destinationOverlayRef.current) {
+                            destinationOverlayRef.current.setMap(null);
+                        }
+
+                        // Helper to get first 2 words
+                        const getShortAddress = (addr: string) => {
+                            const parts = addr.split(',')[0].trim();
+                            return parts.split(' ').slice(0, 2).join(' ');
+                        };
+
+                        // Create pickup card overlay
+                        const pickupPos = allLocations[0];
+                        console.log('Creating pickup overlay at:', pickupPos);
+                        pickupOverlayRef.current = createLocationCardOverlay(
+                            pickupPos,
+                            'From',
+                            getShortAddress(pickup),
+                            onEditPickup,
+                            true // has ETA badge
+                        );
+                        pickupOverlayRef.current.setMap(mapInstanceRef.current);
+
+                        // Create destination card overlay
+                        const destPos = allLocations[allLocations.length - 1];
+                        console.log('Creating destination overlay at:', destPos);
+                        destinationOverlayRef.current = createLocationCardOverlay(
+                            destPos,
+                            'To',
+                            getShortAddress(destination) + '...',
+                            onEditDestination,
+                            false // no ETA badge
+                        );
+                        destinationOverlayRef.current.setMap(mapInstanceRef.current);
+
+                        console.log('Location card overlays created successfully in fallback mode');
                     }
                 }
             };

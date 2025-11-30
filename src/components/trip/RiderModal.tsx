@@ -24,6 +24,7 @@ export function RiderModal({ selectedRider, onSelect, onClose, isOpen }: RiderMo
     const [riders, setRiders] = useState<Rider[]>([
         { id: 'me', name: 'Me', type: 'me' }
     ]);
+    const [isMobile, setIsMobile] = useState(false);
 
     // Form State
     const [firstName, setFirstName] = useState('');
@@ -32,7 +33,19 @@ export function RiderModal({ selectedRider, onSelect, onClose, isOpen }: RiderMo
 
     useEffect(() => {
         setMounted(true);
-        return () => setMounted(false);
+
+        // Detect viewport size
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 1024);
+        };
+
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+
+        return () => {
+            setMounted(false);
+            window.removeEventListener('resize', checkMobile);
+        };
     }, []);
 
     useEffect(() => {
@@ -92,10 +105,21 @@ export function RiderModal({ selectedRider, onSelect, onClose, isOpen }: RiderMo
                         onClick={handleClose}
                     />
 
-                    {/* Modal */}
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none">
-                        <div className={`w-[480px] bg-white rounded-2xl shadow-2xl p-6 pointer-events-auto overflow-hidden transition-all duration-200 ease-in-out ${isOpen && !isClosing && !isOpening ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+                    {/* Modal Container - Bottom Sheet on Mobile, Centered Modal on Desktop */}
+                    <div className={`fixed z-[100] pointer-events-none ${isMobile
+                            ? 'inset-x-0 bottom-0'
+                            : 'inset-0 flex items-center justify-center'
+                        }`}>
+                        <div className={`bg-white overflow-hidden shadow-2xl p-6 pointer-events-auto transition-all duration-200 ease-in-out ${isMobile
+                                ? 'w-full rounded-t-3xl max-h-[90vh]'
+                                : 'w-[480px] rounded-2xl'
+                            } ${isOpen && !isClosing && !isOpening ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
                             }`}>
+
+                            {/* Drag Handle (Mobile Only) */}
+                            {isMobile && (
+                                <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-4 -mt-2" />
+                            )}
                             {view === 'list' ? (
                                 <>
                                     {/* Header */}

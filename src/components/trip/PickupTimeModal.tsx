@@ -24,13 +24,26 @@ export function PickupTimeModal({ onClose, onSchedule, pickupName = "Pickup Loca
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [selectedTime, setSelectedTime] = useState('Now');
     const [isTimeDropdownOpen, setIsTimeDropdownOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
 
     // Calendar Navigation State
     const [currentMonthDate, setCurrentMonthDate] = useState(new Date());
 
     useEffect(() => {
         setMounted(true);
-        return () => setMounted(false);
+
+        // Detect viewport size
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 1024);
+        };
+
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+
+        return () => {
+            setMounted(false);
+            window.removeEventListener('resize', checkMobile);
+        };
     }, []);
 
     useEffect(() => {
@@ -120,10 +133,21 @@ export function PickupTimeModal({ onClose, onSchedule, pickupName = "Pickup Loca
                         onClick={handleClose}
                     />
 
-                    {/* Modal Container */}
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-none">
-                        <div className={`bg-white w-full max-w-[400px] rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] pointer-events-auto transition-all duration-200 ease-in-out ${isOpen && !isClosing && !isOpening ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+                    {/* Modal Container - Bottom Sheet on Mobile, Centered Modal on Desktop */}
+                    <div className={`fixed z-[100] pointer-events-none ${isMobile
+                        ? 'inset-x-0 bottom-0'
+                        : 'inset-0 flex items-center justify-center p-4'
+                        }`}>
+                        <div className={`bg-white w-full overflow-hidden shadow-2xl flex flex-col pointer-events-auto transition-all duration-200 ease-in-out ${isMobile
+                            ? 'rounded-t-3xl max-h-[90vh]'
+                            : 'max-w-[400px] rounded-2xl max-h-[90vh]'
+                            } ${isOpen && !isClosing && !isOpening ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
                             }`}>
+
+                            {/* Drag Handle (Mobile Only) */}
+                            {isMobile && (
+                                <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto mt-3 mb-2" />
+                            )}
 
                             {/* Header */}
                             <div className="px-4 pt-4 pb-2 flex items-center justify-between flex-shrink-0">

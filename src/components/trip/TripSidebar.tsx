@@ -8,7 +8,7 @@ import { PickupTimeModal } from './PickupTimeModal';
 import { ServiceModeToggle } from './ServiceModeToggle';
 import { ServiceTypeSelector } from './ServiceTypeSelector';
 import { LocationIcon } from './LocationIcon';
-import { SetLocationModal } from './SetLocationModal';
+import { LocationPickerModal } from './LocationPickerModal';
 import { AddPlaceModal } from './AddPlaceModal';
 import { EditPlaceModal } from './EditPlaceModal';
 import { SavedPlacesModal } from './SavedPlacesModal';
@@ -22,6 +22,7 @@ interface TripSidebarProps {
     onStopsChange?: (stops: string[]) => void;
     serviceMode: 'ride' | 'send' | 'receive';
     onServiceModeChange: (mode: 'ride' | 'send' | 'receive') => void;
+    focusedField?: 'pickup' | 'destination' | null;
 }
 
 
@@ -45,7 +46,8 @@ export function TripSidebar({
     destination: initialDestination,
     onStopsChange,
     serviceMode,
-    onServiceModeChange
+    onServiceModeChange,
+    focusedField
 }: TripSidebarProps) {
     const router = useRouter();
     const [showRiderModal, setShowRiderModal] = useState(false);
@@ -193,6 +195,9 @@ export function TripSidebar({
 
                             const showSuggestions = activeInputId === loc.id;
 
+                            // Check if this field should be highlighted (from location card click)
+                            const isHighlighted = focusedField === loc.type;
+
                             return (
                                 <div key={loc.id} className="relative">
                                     {/* Location Icon */}
@@ -213,10 +218,12 @@ export function TripSidebar({
                                         onChange={(e) => handleLocationChange(loc.id, e.target.value)}
                                         onFocus={() => setActiveInputId(loc.id)}
                                         placeholder={loc.placeholder}
-                                        className={`w-full pl-10 ${paddingRight} py-4 bg-[#F3F3F3] rounded-xl text-[15px] font-medium outline-none focus:bg-white focus:ring-2 focus:ring-black transition-all ${loc.value ? 'text-black' : 'text-gray-400'
+                                        className={`w-full pl-10 ${paddingRight} py-4 bg-[#F3F3F3] rounded-xl text-[15px] font-medium outline-none transition-all ${loc.value ? 'text-black' : 'text-gray-400'
+                                            } ${isHighlighted
+                                                ? 'ring-4 ring-blue-500 ring-opacity-50 bg-blue-50 animate-pulse'
+                                                : 'focus:bg-white focus:ring-2 focus:ring-black'
                                             }`}
                                     />
-
                                     {/* Clear Button */}
                                     {showClear && (
                                         <button
@@ -460,8 +467,9 @@ export function TripSidebar({
 
             {/* Set Location Modal */}
             {showMapModal && mapModalLocationId && (
-                <SetLocationModal
+                <LocationPickerModal
                     isOpen={showMapModal}
+                    mode="set"
                     onClose={() => {
                         setShowMapModal(false);
                         setMapModalLocationId(null);

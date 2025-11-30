@@ -17,10 +17,23 @@ export function PaymentMethodModal({ isOpen, onClose, onSelect }: PaymentMethodM
     const [mounted, setMounted] = useState(false);
     const [view, setView] = useState<View>('list');
     const [giftCode, setGiftCode] = useState('');
+    const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
         setMounted(true);
-        return () => setMounted(false);
+
+        // Detect viewport size
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 1024);
+        };
+
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+
+        return () => {
+            setMounted(false);
+            window.removeEventListener('resize', checkMobile);
+        };
     }, []);
 
     const handleBack = () => {
@@ -43,15 +56,25 @@ export function PaymentMethodModal({ isOpen, onClose, onSelect }: PaymentMethodM
                         onClick={onClose}
                     />
 
-                    {/* Modal */}
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none">
+                    {/* Modal Container - Bottom Sheet on Mobile, Centered Modal on Desktop */}
+                    <div className={`fixed z-[100] pointer-events-none ${isMobile
+                            ? 'inset-x-0 bottom-0'
+                            : 'inset-0 flex items-center justify-center'
+                        }`}>
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95, y: 10 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 10 }}
                             transition={{ type: "spring", stiffness: 500, damping: 30, mass: 0.5 }}
-                            className="w-[480px] bg-white rounded-2xl shadow-2xl overflow-hidden pointer-events-auto"
+                            className={`bg-white shadow-2xl overflow-hidden pointer-events-auto ${isMobile
+                                    ? 'w-full rounded-t-3xl max-h-[90vh]'
+                                    : 'w-[480px] rounded-2xl'
+                                }`}
                         >
+                            {/* Drag Handle (Mobile Only) */}
+                            {isMobile && (
+                                <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto mt-3 mb-2" />
+                            )}
                             {view === 'list' && (
                                 <div className="p-6">
                                     <div className="flex items-center justify-between mb-6">
