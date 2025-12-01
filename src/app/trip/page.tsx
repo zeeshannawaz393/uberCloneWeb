@@ -26,8 +26,8 @@ type MobileView = 'input' | 'booking';
 
 function TripPageContent() {
     const searchParams = useSearchParams();
-    const pickup = searchParams.get('pickup');
-    const destination = searchParams.get('destination');
+    const pickup = searchParams.get('pickup') || '';
+    const destination = searchParams.get('destination') || '';
 
     // Get trip state from URL or default to 'booking'
     const urlTripState = searchParams.get('state') as 'booking' | 'searching' | 'on_trip' | 'completed' | null;
@@ -153,10 +153,10 @@ function TripPageContent() {
         return () => clearTimeout(timer);
     }, [pickup, destination]);
 
-    // Redirect if no locations provided
-    if (!pickup || !destination) {
-        redirect('/');
-    }
+    // Redirect if no locations provided - REMOVED to allow direct access to /trip
+    // if (!pickup || !destination) {
+    //     redirect('/');
+    // }
 
     // Mock service availability check
     const UNAVAILABLE_LOCATIONS = [
@@ -164,7 +164,7 @@ function TripPageContent() {
         'LAHORE ORGANIC VILLAGE',
     ];
 
-    const isServiceAvailable = !UNAVAILABLE_LOCATIONS.some((loc) =>
+    const isServiceAvailable = !pickup || !UNAVAILABLE_LOCATIONS.some((loc) =>
         pickup.toLowerCase().includes(loc.toLowerCase())
     );
 
@@ -222,7 +222,7 @@ function TripPageContent() {
             {/* MOBILE LAYOUT (< 1024px) */}
             <div className="lg:hidden flex-1 flex flex-col overflow-hidden">
                 {tripState === 'on_trip' || tripState === 'completed' ? (
-                    // ON_TRIP/COMPLETED MODE: Map + RideStatusCard
+                    // ON_TRIP/COMPLETED MODE: Map + RideStatusCard/TripReceipt
                     <div className="relative h-full overflow-hidden">
                         {/* Map Container */}
                         <div className="absolute inset-0">
@@ -238,14 +238,24 @@ function TripPageContent() {
                             />
                         </div>
 
-                        {/* RideStatusCard Overlay */}
+                        {/* RideStatusCard or TripReceipt Overlay */}
                         <div className="absolute bottom-0 left-0 right-0 z-20">
-                            <RideStatusCard
-                                pickup={pickup}
-                                destination={destination}
-                                onCancel={() => setTripState('booking')}
-                                onTripComplete={() => setTripState('completed')}
-                            />
+                            {tripState === 'completed' ? (
+                                <TripReceipt
+                                    pickup={pickup}
+                                    destination={destination}
+                                    driverName="Alex"
+                                    rideName="UberX"
+                                    isDelivery={isDeliveryMode}
+                                />
+                            ) : (
+                                <RideStatusCard
+                                    pickup={pickup}
+                                    destination={destination}
+                                    onCancel={() => setTripState('booking')}
+                                    onTripComplete={() => setTripState('completed')}
+                                />
+                            )}
                         </div>
                     </div>
                 ) : mobileView === 'input' ? (
@@ -334,7 +344,7 @@ function TripPageContent() {
                                     </div>
                                 )}
                             </div>
-                        </BottomSheet>"
+                        </BottomSheet>
 
                         {/* Mobile Footer - Payment & Request Button */}
                         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-50">
@@ -373,7 +383,7 @@ function TripPageContent() {
             </div>
 
             {/* DESKTOP LAYOUT (>= 1024px) */}
-            <div className="hidden lg:flex flex-1 overflow-hidden p-6 gap-6 relative">
+            <div className="hidden lg:flex flex-1 overflow-hidden pt-20 p-6 gap-6 relative items-start">
 
                 {/* Left Panel Area */}
                 <div className="w-[350px] flex-shrink-0 z-20 flex flex-col gap-4">
@@ -398,9 +408,9 @@ function TripPageContent() {
                     )}
                 </div>
 
-                {/* Middle/Overlay Area */}
-                {tripState === 'booking' && (
-                    <div className="w-[500px] flex-shrink-0 z-10">
+                {/* Middle/Overlay Area - Only show when we have both locations */}
+                {tripState === 'booking' && pickup && destination && (
+                    <div className="w-[500px] flex-shrink-0 z-10 h-full overflow-hidden">
                         {isLoadingRideOptions ? (
                             // Shimmer skeleton
                             <div className="bg-white rounded-2xl shadow-lg p-6 animate-pulse">
@@ -444,7 +454,7 @@ function TripPageContent() {
 
 
                 {/* Map Area */}
-                <div className="flex-1 relative min-w-0 py-4">
+                <div className="flex-1 relative min-w-0 h-full">
                     <TripMap
                         pickup={pickup}
                         destination={destination}

@@ -5,7 +5,7 @@ import { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 
 export interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'size'> {
-    variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'outline';
+    variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'outline' | 'solid' | 'white' | 'outline-white';
     size?: 'sm' | 'md' | 'lg';
     isLoading?: boolean;
     children: React.ReactNode;
@@ -38,6 +38,12 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 'bg-transparent text-dark-700 hover:bg-dark-100 focus:ring-dark-300',
             outline:
                 'border-2 border-primary-500 text-primary-600 hover:bg-primary-50 focus:ring-primary-500',
+            solid:
+                'bg-black text-white hover:bg-gray-800 focus:ring-black shadow-lg',
+            white:
+                'bg-white text-black hover:bg-gray-100 focus:ring-white shadow-lg',
+            'outline-white':
+                'border-2 border-white text-white hover:bg-white/10 focus:ring-white',
         };
 
         const sizes = {

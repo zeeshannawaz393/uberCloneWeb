@@ -15,6 +15,7 @@ import { SavedPlacesModal } from './SavedPlacesModal';
 import { usePlacesAutocomplete } from '@/hooks/usePlacesAutocomplete';
 import { useSavedPlaces } from '@/hooks/useSavedPlaces';
 import savedPlacesData from '@/mocks/savedPlaces.json';
+import { SharedLocationInput } from '@/components/common/SharedLocationInput';
 
 interface TripSidebarProps {
     pickup: string;
@@ -184,13 +185,15 @@ export function TripSidebar({
                         {locations.map((loc, index) => {
                             const isLast = index === locations.length - 1;
                             const isFirst = index === 0;
-                            const showClear = loc.value && activeInputId === loc.id && !isLast;
+                            const showClear = loc.value && loc.value.trim().length > 0;
                             const showRemove = loc.type === 'stop' && !isDeliveryMode; // Hide remove in delivery mode
 
                             // Calculate padding based on visible buttons
                             let paddingRight = 'pr-10';
                             if (showClear && showRemove) {
-                                paddingRight = 'pr-20';
+                                paddingRight = 'pr-24'; // Both buttons: clear + remove
+                            } else if (showClear || showRemove) {
+                                paddingRight = 'pr-16'; // Single button
                             }
 
                             const showSuggestions = activeInputId === loc.id;
@@ -200,53 +203,45 @@ export function TripSidebar({
 
                             return (
                                 <div key={loc.id} className="relative">
-                                    {/* Location Icon */}
-                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10">
-                                        {isFirst ? (
-                                            <div className="w-3 h-3 rounded-full bg-black"></div>
-                                        ) : isLast ? (
-                                            <div className="w-3 h-3 bg-black" style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }}></div>
-                                        ) : (
-                                            <div className="w-3 h-3 rounded-sm bg-black"></div>
-                                        )}
-                                    </div>
-
-                                    {/* Input Field */}
-                                    <input
-                                        type="text"
+                                    <SharedLocationInput
                                         value={loc.value}
                                         onChange={(e) => handleLocationChange(loc.id, e.target.value)}
                                         onFocus={() => setActiveInputId(loc.id)}
                                         placeholder={loc.placeholder}
-                                        className={`w-full pl-10 ${paddingRight} py-4 bg-[#F3F3F3] rounded-xl text-[15px] font-medium outline-none transition-all ${loc.value ? 'text-black' : 'text-gray-400'
-                                            } ${isHighlighted
-                                                ? 'ring-4 ring-blue-500 ring-opacity-50 bg-blue-50 animate-pulse'
-                                                : 'focus:bg-white focus:ring-2 focus:ring-black'
+                                        className={`${isHighlighted
+                                            ? 'ring-4 ring-blue-500 ring-opacity-50 bg-blue-50 animate-pulse'
+                                            : ''
                                             }`}
+                                        startContent={
+                                            isFirst ? (
+                                                <div className="w-3 h-3 rounded-full bg-black"></div>
+                                            ) : isLast ? (
+                                                <div className="w-3 h-3 bg-black" style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }}></div>
+                                            ) : (
+                                                <div className="w-3 h-3 rounded-sm bg-black"></div>
+                                            )
+                                        }
+                                        showClear={showClear}
+                                        onClear={() => handleLocationChange(loc.id, '')}
+                                        endContent={
+                                            showRemove && (
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        handleRemoveStop(loc.id);
+                                                    }}
+                                                    className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center hover:bg-gray-400 transition-colors touch-manipulation"
+                                                    aria-label="Remove stop"
+                                                >
+                                                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M20 12H4" />
+                                                    </svg>
+                                                </button>
+                                            )
+                                        }
                                     />
-                                    {/* Clear Button */}
-                                    {showClear && (
-                                        <button
-                                            onClick={() => handleLocationChange(loc.id, '')}
-                                            className="absolute right-12 top-1/2 -translate-y-1/2 w-5 h-5 bg-gray-300 rounded-full flex items-center justify-center hover:bg-gray-400 transition-colors z-20"
-                                        >
-                                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
-                                            </svg>
-                                        </button>
-                                    )}
-
-                                    {/* Remove Stop Button */}
-                                    {showRemove && (
-                                        <button
-                                            onClick={() => handleRemoveStop(loc.id)}
-                                            className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 bg-gray-300 rounded-full flex items-center justify-center hover:bg-gray-400 transition-colors z-20"
-                                        >
-                                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M20 12H4" />
-                                            </svg>
-                                        </button>
-                                    )}
 
                                     {/* Enhanced Suggestions Dropdown */}
                                     {showSuggestions && (

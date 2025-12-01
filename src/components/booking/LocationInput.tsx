@@ -7,6 +7,7 @@
 
 import { useState, useRef } from 'react';
 import { usePlacesAutocomplete } from '@/hooks/usePlacesAutocomplete';
+import { SharedLocationInput } from '@/components/common/SharedLocationInput';
 
 interface LocationInputProps {
     type: 'pickup' | 'destination';
@@ -61,60 +62,25 @@ export function LocationInput({
     return (
         <div className="relative">
             {/* Input Field */}
-            <div
-                className={`flex items-center gap-3 px-4 py-4 bg-[#F6F6F6] rounded-lg transition-all ${isFocused ? 'ring-2 ring-black bg-white' : ''
-                    }`}
-            >
-                {/* Icon */}
-                <div className="flex-shrink-0">
-                    {type === 'pickup' ? (
+            <SharedLocationInput
+                ref={inputRef}
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+                placeholder={placeholder}
+                isLoading={loading}
+                showClear={!!value}
+                onClear={handleClear}
+                className={isFocused ? 'ring-2 ring-black bg-white' : ''}
+                startContent={
+                    type === 'pickup' ? (
                         <div className="w-3 h-3 rounded-full bg-black"></div>
                     ) : (
                         <div className="w-3 h-3 bg-black"></div>
-                    )}
-                </div>
-
-                {/* Input */}
-                <input
-                    ref={inputRef}
-                    type="text"
-                    value={value}
-                    onChange={(e) => onChange(e.target.value)}
-                    onFocus={handleFocus}
-                    onBlur={handleBlur}
-                    placeholder={placeholder}
-                    className="flex-1 bg-transparent outline-none text-[16px] text-black placeholder:text-[#6B6B6B]"
-                />
-
-                {/* Loading Indicator */}
-                {loading && (
-                    <div className="flex-shrink-0">
-                        <div className="w-4 h-4 border-2 border-gray-300 border-t-black rounded-full animate-spin"></div>
-                    </div>
-                )}
-
-                {/* Clear Button */}
-                {value && !loading && (
-                    <button
-                        onClick={handleClear}
-                        className="flex-shrink-0 w-6 h-6 rounded-full bg-black flex items-center justify-center hover:bg-gray-800 transition-colors"
-                    >
-                        <svg
-                            className="w-3 h-3 text-white"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M6 18L18 6M6 6l12 12"
-                            />
-                        </svg>
-                    </button>
-                )}
-            </div>
+                    )
+                }
+            />
 
             {/* Suggestions Dropdown */}
             {isFocused && predictions.length > 0 && (

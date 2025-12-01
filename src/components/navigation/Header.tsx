@@ -55,17 +55,14 @@ export function Header() {
 
                     {/* Desktop Navigation */}
                     <nav className="hidden lg:flex items-center gap-6">
-                        <Link href="/ride" className="text-[14px] font-medium text-white hover:text-gray-300 transition-colors">
+                        <Link href="/trip" className="text-[14px] font-medium text-white hover:text-gray-300 transition-colors">
                             Ride
                         </Link>
-                        <Link href="/drive" className="text-[14px] font-medium text-white hover:text-gray-300 transition-colors">
+                        <Link href="/driver" className="text-[14px] font-medium text-white hover:text-gray-300 transition-colors">
                             Drive
                         </Link>
-                        <Link href="/business" className="text-[14px] font-medium text-white hover:text-gray-300 transition-colors">
-                            Business
-                        </Link>
-                        <Link href="/uber-eats" className="text-[14px] font-medium text-white hover:text-gray-300 transition-colors">
-                            Uber Eats
+                        <Link href="/trips" className="text-[14px] font-medium text-white hover:text-gray-300 transition-colors">
+                            Activity
                         </Link>
                         <div className="relative group">
                             <button className="text-[14px] font-medium text-white hover:text-gray-300 transition-colors flex items-center gap-1">

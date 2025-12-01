@@ -46,7 +46,7 @@ export function CourierOptions({ onSelect, selectedCourier }: CourierOptionsProp
     return (
         <div className="flex flex-col h-full bg-white relative">
             {/* Header - Hide on mobile when in bottom sheet */}
-            <div className="hidden lg:block px-8 pt-8 pb-4">
+            <div className="hidden lg:block px-8 pb-4">
                 <h2 className="text-[36px] font-bold text-black mb-2 tracking-tight leading-none">Choose an option</h2>
                 <p className="text-[18px] text-black font-bold">Delivery options we think you'll like</p>
             </div>
@@ -58,8 +58,8 @@ export function CourierOptions({ onSelect, selectedCourier }: CourierOptionsProp
                         key={courier.id}
                         onClick={() => setSelectedCourierLocal(courier.id)}
                         className={`w-full flex items-center justify-between p-3 sm:p-4 rounded-xl border-2 transition-all relative ${selectedCourierLocal === courier.id
-                                ? 'border-black bg-gray-50'
-                                : 'border-gray-200 hover:bg-gray-50'
+                            ? 'border-black bg-gray-50'
+                            : 'border-gray-200 hover:bg-gray-50'
                             }`}
                     >
                         <div className="flex items-center gap-3 sm:gap-6 flex-1 min-w-0">

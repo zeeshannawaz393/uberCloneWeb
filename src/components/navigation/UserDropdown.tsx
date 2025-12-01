@@ -22,9 +22,7 @@ export function UserDropdown({ userName, onClose, onSignOut, isAuthenticated = t
     const menuItems = [
         { icon: '👤', label: 'Manage account', href: '/account' },
         { icon: '🚗', label: 'Ride', href: '/trip' },
-        { icon: '🚙', label: 'Drive & deliver', href: '/drive' },
-        { icon: '🍽️', label: 'Uber Eats', href: '/eats' },
-        { icon: '💼', label: 'Uber for Business', href: '/business' },
+        { icon: '🚙', label: 'Drive & deliver', href: '/driver' },
     ];
 
     // Mobile navigation links (shown when not authenticated on mobile)
@@ -91,21 +89,30 @@ export function UserDropdown({ userName, onClose, onSignOut, isAuthenticated = t
 
                         {/* Icon Buttons Row */}
                         <div className="px-4 lg:px-7 py-4 lg:py-5 grid grid-cols-3 gap-2 lg:gap-3 border-b border-[#EEEEEE]">
-                            <button className="h-16 lg:h-20 flex flex-col items-center justify-center gap-1 lg:gap-2 px-2 lg:px-3 py-2 lg:py-3 rounded-xl bg-[#F6F6F6] hover:bg-[#EEEEEE] transition-colors duration-150">
+                            <button
+                                onClick={() => handleItemClick('/help')}
+                                className="h-16 lg:h-20 flex flex-col items-center justify-center gap-1 lg:gap-2 px-2 lg:px-3 py-2 lg:py-3 rounded-xl bg-[#F6F6F6] hover:bg-[#EEEEEE] transition-colors duration-150"
+                            >
                                 <svg className="w-5 h-5 lg:w-6 lg:h-6 text-black" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                                 <span className="text-[12px] lg:text-[13px] text-[#5E5E5E] leading-tight font-medium">Help</span>
                             </button>
 
-                            <button className="h-16 lg:h-20 flex flex-col items-center justify-center gap-1 lg:gap-2 px-2 lg:px-3 py-2 lg:py-3 rounded-xl bg-[#F6F6F6] hover:bg-[#EEEEEE] transition-colors duration-150">
+                            <button
+                                onClick={() => handleItemClick('/wallet')}
+                                className="h-16 lg:h-20 flex flex-col items-center justify-center gap-1 lg:gap-2 px-2 lg:px-3 py-2 lg:py-3 rounded-xl bg-[#F6F6F6] hover:bg-[#EEEEEE] transition-colors duration-150"
+                            >
                                 <svg className="w-5 h-5 lg:w-6 lg:h-6 text-black" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                                 </svg>
                                 <span className="text-[12px] lg:text-[13px] text-[#5E5E5E] leading-tight font-medium">Wallet</span>
                             </button>
 
-                            <button className="h-16 lg:h-20 flex flex-col items-center justify-center gap-1 lg:gap-2 px-2 lg:px-3 py-2 lg:py-3 rounded-xl bg-[#F6F6F6] hover:bg-[#EEEEEE] transition-colors duration-150">
+                            <button
+                                onClick={() => handleItemClick('/trips')}
+                                className="h-16 lg:h-20 flex flex-col items-center justify-center gap-1 lg:gap-2 px-2 lg:px-3 py-2 lg:py-3 rounded-xl bg-[#F6F6F6] hover:bg-[#EEEEEE] transition-colors duration-150"
+                            >
                                 <svg className="w-5 h-5 lg:w-6 lg:h-6 text-black" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                                 </svg>

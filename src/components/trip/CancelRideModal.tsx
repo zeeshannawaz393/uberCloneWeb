@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { BaseModal } from '@/components/common/BaseModal';
+import { Button } from '@/components/ui/Button';
 
 interface CancelRideModalProps {
     isOpen: boolean;
@@ -64,8 +66,8 @@ export function CancelRideModal({ isOpen, onClose, tripState }: CancelRideModalP
     // Step 1: Warning
     if (step === 'warning') {
         return (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={onClose}>
-                <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8" onClick={(e) => e.stopPropagation()}>
+            <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={onClose}>
+                <div className="bg-white rounded-2xl shadow-2xl w-[480px] mx-4 p-8" onClick={(e) => e.stopPropagation()}>
                     {/* Warning Icon */}
                     <div className="w-14 h-14 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <svg className="w-7 h-7 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -84,26 +86,32 @@ export function CancelRideModal({ isOpen, onClose, tripState }: CancelRideModalP
                     {/* Actions */}
                     {feeInfo.canCancel ? (
                         <div className="space-y-3">
-                            <button
+                            <Button
+                                variant="solid"
+                                size="lg"
                                 onClick={onClose}
-                                className="w-full py-4 bg-black text-white rounded-xl font-bold text-lg hover:bg-gray-800 transition-colors"
+                                className="w-full"
                             >
                                 Keep ride
-                            </button>
-                            <button
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="lg"
                                 onClick={() => setStep('reason')}
-                                className="w-full py-4 bg-white text-red-600 border-2 border-red-600 rounded-xl font-bold text-lg hover:bg-red-50 transition-colors"
+                                className="w-full border-2 border-red-600 text-red-600 hover:bg-red-50"
                             >
                                 Cancel ride
-                            </button>
+                            </Button>
                         </div>
                     ) : (
-                        <button
+                        <Button
+                            variant="solid"
+                            size="lg"
                             onClick={onClose}
-                            className="w-full py-4 bg-black text-white rounded-xl font-bold text-lg hover:bg-gray-800 transition-colors"
+                            className="w-full"
                         >
                             Close
-                        </button>
+                        </Button>
                     )}
                 </div>
             </div>
@@ -112,86 +120,72 @@ export function CancelRideModal({ isOpen, onClose, tripState }: CancelRideModalP
 
     // Step 2: Reason Selection
     if (step === 'reason') {
+        const footer = (
+            <Button
+                variant="solid"
+                size="lg"
+                onClick={handleConfirmCancellation}
+                disabled={!selectedReason}
+                isLoading={isProcessing}
+                className="w-full"
+            >
+                {isProcessing ? 'Cancelling...' : 'Confirm cancellation'}
+            </Button>
+        );
+
         return (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm">
-                <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 max-h-[80vh] overflow-y-auto">
-                    {/* Header */}
-                    <div className="p-6 border-b border-gray-100 sticky top-0 bg-white">
-                        <h2 className="text-2xl font-bold text-black">Why are you cancelling?</h2>
-                    </div>
-
-                    {/* Reason List */}
-                    <div className="p-6 space-y-2">
-                        {CANCELLATION_REASONS.map((reason) => (
-                            <button
-                                key={reason}
-                                onClick={() => setSelectedReason(reason)}
-                                className={`w-full text-left p-4 rounded-xl border-2 transition-all ${selectedReason === reason
-                                        ? 'border-black bg-gray-50'
-                                        : 'border-gray-200 hover:border-gray-300'
-                                    }`}
-                            >
-                                <div className="flex items-center justify-between">
-                                    <span className="font-medium text-black">{reason}</span>
-                                    {selectedReason === reason && (
-                                        <div className="w-5 h-5 bg-black rounded-full flex items-center justify-center">
-                                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                            </svg>
-                                        </div>
-                                    )}
-                                </div>
-                            </button>
-                        ))}
-
-                        {/* Other reason input */}
-                        {selectedReason === 'Other' && (
-                            <textarea
-                                value={otherReason}
-                                onChange={(e) => setOtherReason(e.target.value)}
-                                placeholder="Tell us what happened (optional)"
-                                className="w-full mt-4 px-4 py-3 bg-gray-50 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-black text-sm"
-                                rows={3}
-                            />
-                        )}
-                    </div>
-
-                    {/* Actions */}
-                    <div className="p-6 border-t border-gray-100 space-y-3">
+            <BaseModal
+                isOpen={true}
+                onClose={() => setStep('warning')}
+                title="Why are you cancelling?"
+                showHeaderBorder={true}
+                showFooterBorder={true}
+                footer={footer}
+                size="md"
+            >
+                <div className="p-6 space-y-2">
+                    {CANCELLATION_REASONS.map((reason) => (
                         <button
-                            onClick={handleConfirmCancellation}
-                            disabled={!selectedReason || isProcessing}
-                            className={`w-full py-4 rounded-xl font-bold text-lg transition-colors ${selectedReason && !isProcessing
-                                    ? 'bg-black text-white hover:bg-gray-800'
-                                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                            key={reason}
+                            onClick={() => setSelectedReason(reason)}
+                            className={`w-full text-left p-4 rounded-xl border-2 transition-all ${selectedReason === reason
+                                ? 'border-black bg-gray-50'
+                                : 'border-gray-200 hover:border-gray-300'
                                 }`}
                         >
-                            {isProcessing ? (
-                                <div className="flex items-center justify-center gap-3">
-                                    <div className="w-5 h-5 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
-                                    <span>Cancelling...</span>
-                                </div>
-                            ) : (
-                                'Confirm cancellation'
-                            )}
+                            <div className="flex items-center justify-between">
+                                <span className="font-medium text-black">{reason}</span>
+                                {selectedReason === reason && (
+                                    <div className="w-5 h-5 bg-black rounded-full flex items-center justify-center">
+                                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                )}
+                            </div>
                         </button>
-                        <button
-                            onClick={() => setStep('warning')}
-                            className="w-full py-4 bg-white text-black border-2 border-gray-300 rounded-xl font-bold text-lg hover:bg-gray-50 transition-colors"
-                        >
-                            Go back
-                        </button>
-                    </div>
+                    ))}
+
+                    {/* Other reason input */}
+                    {selectedReason === 'Other' && (
+                        <textarea
+                            value={otherReason}
+                            onChange={(e) => setOtherReason(e.target.value)}
+                            placeholder="Tell us what happened (optional)"
+                            className="w-full mt-4 px-4 py-3 bg-gray-50 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-black text-sm"
+                            rows={3}
+                        />
+                    )}
                 </div>
-            </div>
+            </BaseModal>
         );
     }
 
     // Step 3: Confirmation
     if (step === 'confirmed') {
         return (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm">
-                <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8">
+            <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/40 backdrop-blur-sm">
+                <div className="bg-white rounded-2xl shadow-2xl w-[480px] mx-4 p-8">
                     {/* Success Icon */}
                     <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <svg className="w-7 h-7 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -218,12 +212,14 @@ export function CancelRideModal({ isOpen, onClose, tripState }: CancelRideModalP
                     </div>
 
                     {/* Done Button */}
-                    <button
+                    <Button
+                        variant="solid"
+                        size="lg"
                         onClick={handleDone}
-                        className="w-full py-4 bg-black text-white rounded-xl font-bold text-lg hover:bg-gray-800 transition-colors"
+                        className="w-full"
                     >
                         Done
-                    </button>
+                    </Button>
                 </div>
             </div>
         );

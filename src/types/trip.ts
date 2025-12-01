@@ -40,3 +40,33 @@ export interface TripEstimate {
     surgeMultiplier: number;
     estimatedPrice: number;
 }
+
+// Trip History Types (for trips list page)
+export interface TripHistory {
+    id: string;
+    destination: string;
+    pickup?: string;
+    date: string;
+    time: string;
+    price: number;
+    currency: string;
+    status: 'completed' | 'canceled' | 'unfulfilled';
+    vehicleType: 'car' | 'scooter' | 'package';
+    driverName?: string;
+    mapData?: {
+        pickupLat: number;
+        pickupLng: number;
+        destLat: number;
+        destLng: number;
+    };
+    isFeatured?: boolean;
+}
+
+export interface TripFilters {
+    type: 'personal' | 'business' | 'all';
+    category: 'all' | 'ride' | 'delivery';
+    dateRange?: {
+        start: Date;
+        end: Date;
+    };
+}
