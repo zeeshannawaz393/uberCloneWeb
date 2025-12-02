@@ -17,7 +17,7 @@ export function DriverApp() {
                             Easy to use and reliable, the app was built for drivers, with drivers.
                         </p>
                         <Link
-                            href="#"
+                            href="/driver/app"
                             className="text-black font-medium hover:underline flex items-center gap-1 text-lg"
                         >
                             Download the Driver app

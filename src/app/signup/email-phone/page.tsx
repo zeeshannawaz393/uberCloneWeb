@@ -18,13 +18,31 @@ export default function EmailPhonePage() {
         if (!value.trim()) return;
 
         setEmailOrPhone(value);
-        setCurrentStep('verify-code');
-        router.push('/signup/verify-code');
+
+        // Mock: Check if user exists and route accordingly
+        // In production, this would call an API to check user existence
+        const isExistingUser = value.includes('@') || value.length > 8; // Mock check
+        const isDriver = value.includes('driver') || value.includes('@driver');
+
+        if (isExistingUser) {
+            // Existing user - route to appropriate dashboard
+            if (isDriver) {
+                router.push('/driver/dashboard');
+            } else {
+                router.push('/trip'); // Rider goes to trip booking
+            }
+        } else {
+            // New user - continue with signup flow
+            setCurrentStep('verify-code');
+            router.push('/signup/verify-code');
+        }
     };
 
     const handleSocialLogin = (provider: string) => {
         console.log(`Social login with ${provider}`);
-        // TODO: Implement social login
+        // Mock: Assume social login users are existing users
+        // Route to driver dashboard by default (can be customized)
+        router.push('/driver/dashboard');
     };
 
     return (

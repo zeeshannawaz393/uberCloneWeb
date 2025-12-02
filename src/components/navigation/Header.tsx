@@ -123,13 +123,13 @@ export function Header() {
                         /* Logged Out: Login + Signup */
                         <>
                             <Link
-                                href="/login"
+                                href="/signup/email-phone"
                                 className="hidden sm:block text-[14px] font-medium text-white hover:text-gray-300 transition-colors"
                             >
                                 Log in
                             </Link>
                             <Link
-                                href="/signup"
+                                href="/signup/email-phone"
                                 className="bg-white text-black px-3 sm:px-4 py-1.5 rounded-full text-[14px] font-medium hover:bg-gray-200 transition-colors"
                             >
                                 Sign up

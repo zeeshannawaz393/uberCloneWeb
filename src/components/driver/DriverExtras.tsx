@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 
 export function DriverExtras() {
@@ -12,7 +13,8 @@ export function DriverExtras() {
             ),
             title: 'Get support',
             description: 'Let’s make every Uber trip hassle-free. Our support pages can help you set up your account, get started with the app, adjust fares, and more.',
-            link: 'Get help'
+            link: 'Get help',
+            href: '/help'
         },
         {
             icon: (
@@ -22,7 +24,8 @@ export function DriverExtras() {
             ),
             title: 'Contact us',
             description: 'Got questions? We’ve got answers. Contact us for any questions you might have.',
-            link: 'Contact us'
+            link: 'Contact us',
+            href: '/contact'
         },
         {
             icon: (
@@ -32,7 +35,8 @@ export function DriverExtras() {
             ),
             title: 'Get started',
             description: 'Start making money. Sign up to drive with Uber today.',
-            link: 'Sign up now'
+            link: 'Sign up now',
+            href: '/driver/onboarding/resume'
         }
     ];
 
@@ -58,15 +62,17 @@ export function DriverExtras() {
                             <p className="text-gray-600 leading-relaxed mb-4">
                                 {extra.description}
                             </p>
-                            <Button
-                                variant="ghost"
-                                className="text-black font-medium hover:underline hover:bg-transparent p-0 h-auto"
-                            >
-                                {extra.link}
-                                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                </svg>
-                            </Button>
+                            <Link href={extra.href} className="inline-block">
+                                <Button
+                                    variant="ghost"
+                                    className="text-black font-medium hover:underline hover:bg-transparent p-0 h-auto"
+                                >
+                                    {extra.link}
+                                    <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </Button>
+                            </Link>
                         </div>
                     ))}
                 </div>

@@ -30,8 +30,14 @@ export default function ProfilePage() {
         }
 
         setProfile(formData);
-        setStep('terms');
-        router.push(routes.auth.terms);
+
+        // If driver, redirect to driver onboarding
+        if (formData.role === 'driver') {
+            router.push('/driver/onboarding/resume');
+        } else {
+            setStep('terms');
+            router.push(routes.auth.terms);
+        }
     };
 
     return (

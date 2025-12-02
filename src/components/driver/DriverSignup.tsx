@@ -11,7 +11,7 @@ export function DriverSignup() {
                     <h2 className="text-3xl lg:text-4xl font-bold text-black">
                         Sign up to drive
                     </h2>
-                    <Link href="/auth/signup?type=driver">
+                    <Link href="/driver/onboarding/resume">
                         <Button
                             variant="ghost"
                             className="w-12 h-12 rounded-full bg-gray-100 hover:bg-gray-200 p-0"

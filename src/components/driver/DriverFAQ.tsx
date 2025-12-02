@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 export function DriverFAQ() {
     const faqs = [
         {
             question: 'Can I drive with Uber in my city?',
-            answer: 'Uber is available in hundreds of cities worldwide. You can check if Uber is available in your city by visiting our cities page.'
+            answer: <span>Uber is available in hundreds of cities worldwide. You can check if Uber is available in your city by visiting our <Link href="/cities" className="underline hover:no-underline">cities page</Link>.</span>
         },
         {
             question: 'What are the requirements to drive with Uber?',

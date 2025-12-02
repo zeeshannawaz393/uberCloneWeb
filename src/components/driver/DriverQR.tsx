@@ -25,7 +25,7 @@ export function DriverQR() {
                     {/* Links */}
                     <div className="flex flex-col gap-4">
                         <Link
-                            href="#"
+                            href="/driver/app"
                             className="text-black font-medium hover:underline flex items-center gap-1 text-lg"
                         >
                             Download the Driver app for iOS
@@ -34,7 +34,7 @@ export function DriverQR() {
                             </svg>
                         </Link>
                         <Link
-                            href="#"
+                            href="/driver/app"
                             className="text-black font-medium hover:underline flex items-center gap-1 text-lg"
                         >
                             Download the Driver app for Android

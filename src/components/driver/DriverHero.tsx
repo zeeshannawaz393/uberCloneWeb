@@ -18,7 +18,7 @@ export function DriverHero() {
                             Make money on your schedule with deliveries or rides—or both. You can use your own car or choose a rental through Uber.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4">
-                            <Link href="/auth/signup?type=driver">
+                            <Link href="/driver/onboarding/resume">
                                 <Button variant="white" size="lg" className="rounded-full px-8 py-6 text-lg">
                                     Sign up to drive
                                 </Button>

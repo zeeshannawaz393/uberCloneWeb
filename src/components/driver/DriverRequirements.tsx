@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 
 export function DriverRequirements() {
@@ -12,7 +13,8 @@ export function DriverRequirements() {
             ),
             title: 'Sign up requirements',
             description: 'Drivers must meet the minimum age requirements, have the legal right to work in their country, and pass a background check.',
-            link: 'Sign up to drive'
+            link: 'Sign up to drive',
+            href: '/driver/onboarding/resume'
         },
         {
             icon: (
@@ -22,7 +24,8 @@ export function DriverRequirements() {
             ),
             title: 'Driver requirements',
             description: 'You need a valid driver’s license, proof of residency in your city, state, or province, and insurance if you plan to drive your own car.',
-            link: 'See details'
+            link: 'See details',
+            href: '/driver/requirements'
         },
         {
             icon: (
@@ -32,7 +35,8 @@ export function DriverRequirements() {
             ),
             title: 'Vehicle requirements',
             description: 'You can sign up even if you don’t have a car. We can help you get one.',
-            link: 'See vehicle options'
+            link: 'See vehicle options',
+            href: '/driver/vehicles'
         }
     ];
 
@@ -55,15 +59,17 @@ export function DriverRequirements() {
                             <p className="text-gray-600 leading-relaxed mb-4">
                                 {req.description}
                             </p>
-                            <Button
-                                variant="ghost"
-                                className="text-black font-medium hover:underline hover:bg-transparent p-0 h-auto"
-                            >
-                                {req.link}
-                                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                </svg>
-                            </Button>
+                            <Link href={req.href} className="inline-block">
+                                <Button
+                                    variant="ghost"
+                                    className="text-black font-medium hover:underline hover:bg-transparent p-0 h-auto"
+                                >
+                                    {req.link}
+                                    <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </Button>
+                            </Link>
                         </div>
                     ))}
                 </div>
